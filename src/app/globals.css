@@ -1,26 +1,250 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0f0a06;
+  --foreground: #fef3e2;
+  --coffee-primary: #8b4513;
+  --coffee-secondary: #d2691e;
+  --coffee-accent: #f4a460;
+  --coffee-dark: #3e1a00;
+  --coffee-light: #ffeaa7;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background:
+    /* Coffee beans texture overlay */ radial-gradient(
+      circle at 10% 10%,
+      rgba(139, 69, 19, 0.1),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 25% 80%,
+      rgba(210, 105, 30, 0.08),
+      transparent 25%
+    ),
+    radial-gradient(circle at 70% 30%, rgba(92, 51, 23, 0.12), transparent 30%),
+    radial-gradient(circle at 90% 90%, rgba(139, 69, 19, 0.06), transparent 35%),
+    /* Coffee steam effect */
+      linear-gradient(135deg, rgba(244, 164, 96, 0.02) 0%, transparent 40%),
+    linear-gradient(45deg, rgba(210, 105, 30, 0.03) 60%, transparent 100%),
+    /* Main coffee gradient background */
+      linear-gradient(
+        180deg,
+        #0f0a06 0%,
+        #1a0f08 25%,
+        #2d1810 50%,
+        #1a0f08 75%,
+        #0f0a06 100%
+      );
+
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0.01em;
+  position: relative;
+}
+
+/* Coffee aroma particles animation */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(
+      circle at 20% 20%,
+      rgba(244, 164, 96, 0.02),
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 40%,
+      rgba(210, 105, 30, 0.015),
+      transparent 1px
+    ),
+    radial-gradient(circle at 40% 80%, rgba(139, 69, 19, 0.01), transparent 1px);
+  background-size: 150px 150px, 200px 200px, 100px 100px;
+  animation: coffeeParticles 20s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes coffeeParticles {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+  }
+}
+
+/* Glassmorphism styles */
+.glass-card {
+  background: rgba(244, 164, 96, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(244, 164, 96, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(244, 164, 96, 0.1);
+}
+
+.glass-nav {
+  background: rgba(92, 51, 23, 0.3);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(244, 164, 96, 0.1);
+}
+
+.glass-button {
+  background: rgba(139, 69, 19, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(244, 164, 96, 0.2);
+  transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+  background: rgba(139, 69, 19, 0.3);
+  border-color: rgba(244, 164, 96, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Coffee theme colors */
+.coffee-primary {
+  color: var(--coffee-primary);
+}
+
+.coffee-secondary {
+  color: var(--coffee-secondary);
+}
+
+.coffee-accent {
+  color: var(--coffee-accent);
+}
+
+.bg-coffee-primary {
+  background-color: var(--coffee-primary);
+}
+
+.bg-coffee-secondary {
+  background-color: var(--coffee-secondary);
+}
+
+.bg-coffee-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--coffee-primary) 0%,
+    var(--coffee-secondary) 100%
+  );
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(92, 51, 23, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(139, 69, 19, 0.6) 0%,
+    rgba(210, 105, 30, 0.6) 100%
+  );
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(139, 69, 19, 0.8) 0%,
+    rgba(210, 105, 30, 0.8) 100%
+  );
+}
+
+/* Selection styling */
+::selection {
+  background-color: rgba(244, 164, 96, 0.3);
+  color: #fef3e2;
+}
+
+/* Text glow effect for headings */
+h1,
+h2,
+h3 {
+  text-shadow: 0 0 10px rgba(244, 164, 96, 0.1);
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+button:focus {
+  outline: 2px solid rgba(244, 164, 96, 0.5);
+  outline-offset: 2px;
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%,
+  43% {
+    transform: translate3d(0, -15px, 0);
+  }
+  70% {
+    transform: translate3d(0, -7px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounce 2s infinite;
 }
