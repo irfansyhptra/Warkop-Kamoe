@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useNotification } from "../../../../hooks/useNotification";
-import Button from "../../../../components/ui/Button";
-import Input from "../../../../components/ui/Input";
+import { useAuth } from "@/hooks/useAuth";
+import { useNotification } from "@/hooks/useNotification";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -49,26 +49,20 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const user = await register({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        role: formData.role,
-      });
+      const success = await register(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.phone
+      );
 
-      showSuccess("Registrasi Berhasil", `Selamat datang, ${user.name}!`);
-
-      // Redirect based on user role
-      switch (user.role) {
-        case "warkop_owner":
-          router.push("/warkop-owner/setup");
-          break;
-        default:
-          router.push("/");
-          break;
+      if (success) {
+        showSuccess("Registrasi Berhasil", "Akun Anda berhasil dibuat!");
+        router.push("/");
+      } else {
+        showError("Registrasi Gagal", "Terjadi kesalahan, silakan coba lagi");
       }
-    } catch (error) {
+    } catch {
       showError("Registrasi Gagal", "Terjadi kesalahan, silakan coba lagi");
     } finally {
       setLoading(false);

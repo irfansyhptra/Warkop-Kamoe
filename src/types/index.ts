@@ -7,6 +7,18 @@ export interface MenuItem {
   image?: string;
   availability: "available" | "unavailable" | "limited";
   isRecommended?: boolean;
+  ingredients?: string[];
+  nutrition?: {
+    calories: number;
+    caffeine: string;
+    fat: string;
+    carbs: string;
+    protein?: string;
+  };
+  spicyLevel?: number;
+  preparationTime?: string;
+  allergens?: string[];
+  tags?: string[];
 }
 
 export interface Warkop {
@@ -89,6 +101,9 @@ export interface User {
   phone?: string;
   avatar?: string;
   favoriteWarkops: string[];
+  role?: "admin" | "customer" | "warkop_owner";
+  isVerified?: boolean;
+  warkopId?: string;
 }
 
 export interface FilterOptions {
@@ -119,4 +134,27 @@ export interface Promo {
   validUntil: string;
   warkopIds?: string[];
   minPurchase?: number;
+}
+
+export interface SalesReport {
+  date: string;
+  totalOrders: number;
+  totalRevenue: number;
+  topSellingItems: {
+    menuItem: MenuItem;
+    quantity: number;
+    revenue: number;
+  }[];
+}
+
+export interface WarkopRegistration {
+  name: string;
+  description: string;
+  location: string;
+  coordinates: { lat: number; lng: number };
+  contactInfo: { phone: string; whatsapp: string; email?: string };
+  openingHours: { open: string; close: string; is24Hours: boolean };
+  facilities: string[];
+  images: string[];
+  ownerInfo: { name: string; email: string; phone: string; idCard: string };
 }

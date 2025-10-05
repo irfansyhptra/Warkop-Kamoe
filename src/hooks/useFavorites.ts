@@ -50,6 +50,10 @@ export const useFavorites = () => {
     });
   }, []);
 
+  const clearAllFavorites = useCallback(() => {
+    setFavoriteWarkops([]);
+  }, []);
+
   const isFavorite = useCallback(
     (warkopId: string) => {
       return favoriteWarkops.includes(warkopId);
@@ -63,9 +67,11 @@ export const useFavorites = () => {
 
   return {
     favoriteWarkops,
+    favorites: favoriteWarkops, // Alias for compatibility
     addToFavorites,
     removeFromFavorites,
     toggleFavorite,
+    clearAllFavorites,
     isFavorite,
     getFavoritesCount,
   };

@@ -175,12 +175,12 @@ const Header: React.FC = () => {
               </span>
             </Link>
             <div className="flex items-center gap-2">
-              <Link href="/(pages)/auth?tab=login">
+              <Link href="/auth?tab=login">
                 <Button variant="ghost" size="sm">
                   Login
                 </Button>
               </Link>
-              <Link href="/(pages)/auth?tab=register">
+              <Link href="/auth?tab=register">
                 <Button variant="primary" size="sm">
                   Register
                 </Button>
@@ -247,12 +247,12 @@ const Header: React.FC = () => {
               </Link>
             </nav>
             <div className="flex gap-2 pt-4 border-t border-amber-200/20">
-              <Link href="/(pages)/auth?tab=login" className="flex-1">
+              <Link href="/auth?tab=login" className="flex-1">
                 <Button variant="ghost" size="sm" className="w-full">
                   Login
                 </Button>
               </Link>
-              <Link href="/(pages)/auth?tab=register" className="flex-1">
+              <Link href="/auth?tab=register" className="flex-1">
                 <Button variant="primary" size="sm" className="w-full">
                   Register
                 </Button>

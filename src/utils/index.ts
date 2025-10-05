@@ -124,7 +124,7 @@ export const formatPhoneNumber = (phone: string): string => {
   return `+62${cleaned}`;
 };
 
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {

@@ -86,13 +86,13 @@ const Footer: React.FC = () => {
                 Home
               </Link>
               <Link
-                href="/(pages)/favorites"
+                href="/favorites"
                 className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
               >
                 Favorites
               </Link>
               <Link
-                href="/(pages)/cart"
+                href="/cart"
                 className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
               >
                 Keranjang

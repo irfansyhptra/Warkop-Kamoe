@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useNotification } from "../../../../hooks/useNotification";
-import Button from "../../../../components/ui/Button";
-import Input from "../../../../components/ui/Input";
+import { useAuth } from "@/hooks/useAuth";
+import { useNotification } from "@/hooks/useNotification";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -32,23 +32,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const user = await login(formData);
-      showSuccess("Login Berhasil", `Selamat datang, ${user.name}!`);
-
-      // Redirect based on user role
-      switch (user.role) {
-        case "admin":
-          router.push("/admin/dashboard");
-          break;
-        case "warkop_owner":
-          router.push("/warkop-owner/dashboard");
-          break;
-        default:
-          router.push("/");
-          break;
+      const success = await login(formData.email, formData.password);
+      if (success) {
+        showSuccess("Login Berhasil", "Selamat datang kembali!");
+        router.push("/");
+      } else {
+        showError("Login Gagal", "Email atau password salah");
       }
-    } catch (error) {
-      showError("Login Gagal", "Email atau password salah");
+    } catch {
+      showError("Login Gagal", "Terjadi kesalahan, silakan coba lagi");
     } finally {
       setLoading(false);
     }
