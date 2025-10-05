@@ -10,11 +10,11 @@ import Input from "@/components/ui/Input";
 function AuthPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { login, register, user } = useAuth();
+  const { login, register, user, loading: authLoading } = useAuth();
   const { showSuccess, showError } = useNotification();
 
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
-  const [loading, setLoading] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
 
   // Login form state
   const [loginData, setLoginData] = useState({
@@ -39,79 +39,93 @@ function AuthPageContent() {
     }
   }, [searchParams]);
 
+  // Redirect after successful login/register
   useEffect(() => {
-    // Redirect if already logged in
-    if (user) {
-      router.push("/");
+    // Don't redirect if still checking auth state
+    if (authLoading) return;
+
+    if (user && !formLoading) {
+      // Small delay to show success message
+      const timer = setTimeout(() => {
+        router.push("/");
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
-  }, [user, router]);
+  }, [user, formLoading, authLoading, router]);
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
 
     try {
       // Validasi
       if (!loginData.email || !loginData.password) {
         showError("Error", "Email dan password harus diisi");
-        setLoading(false);
+        setFormLoading(false);
         return;
       }
 
-      // Simulasi login
-      await login(loginData.email, loginData.password);
-      showSuccess("Berhasil", "Login berhasil!");
-      router.push("/");
-    } catch {
-      showError("Error", "Email atau password salah");
+      // Call login API
+      const success = await login(loginData.email, loginData.password);
+
+      if (success) {
+        showSuccess("Berhasil", "Login berhasil!");
+        // Auto redirect will happen from useEffect
+      } else {
+        showError("Error", "Email atau password salah");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      showError("Error", "Login gagal. Silakan coba lagi.");
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
 
     try {
       // Validasi
       if (!registerData.name || !registerData.email || !registerData.password) {
         showError("Error", "Semua field harus diisi");
-        setLoading(false);
+        setFormLoading(false);
         return;
       }
 
       if (registerData.password !== registerData.confirmPassword) {
         showError("Error", "Password tidak cocok");
-        setLoading(false);
+        setFormLoading(false);
         return;
       }
 
       if (registerData.password.length < 6) {
         showError("Error", "Password minimal 6 karakter");
-        setLoading(false);
+        setFormLoading(false);
         return;
       }
 
-      // Simulasi register
-      await register(
+      // Call register API
+      const success = await register(
         registerData.email,
         registerData.password,
-        registerData.name
+        registerData.name,
+        registerData.phone
       );
-      showSuccess("Berhasil", "Registrasi berhasil! Silakan login.");
-      setActiveTab("login");
-      setRegisterData({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        phone: "",
-      });
-    } catch {
-      showError("Error", "Registrasi gagal. Email mungkin sudah terdaftar.");
+
+      if (success) {
+        showSuccess("Berhasil", "Registrasi berhasil! Anda akan diarahkan...");
+        // Auto redirect will happen from useEffect
+      } else {
+        showError("Error", "Registrasi gagal. Email mungkin sudah terdaftar.");
+      }
+    } catch (error) {
+      console.error("Register error:", error);
+      showError("Error", "Registrasi gagal. Silakan coba lagi.");
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
@@ -119,6 +133,34 @@ function AuthPageContent() {
     setActiveTab(tab);
     router.push(`/auth?tab=${tab}`, { scroll: false });
   };
+
+  // Show loading while checking auth state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Memuat...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show success message if user is logged in
+  if (user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
+        <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md">
+          <div className="text-6xl mb-4">✅</div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Login Berhasil!
+          </h2>
+          <p className="text-gray-600 mb-4">Selamat datang, {user.name}!</p>
+          <p className="text-sm text-gray-500">Mengalihkan ke beranda...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -221,10 +263,10 @@ function AuthPageContent() {
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={formLoading}
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition-colors"
               >
-                {loading ? "Memproses..." : "Masuk"}
+                {formLoading ? "Memproses..." : "Masuk"}
               </Button>
 
               <div className="relative my-6">
@@ -390,10 +432,10 @@ function AuthPageContent() {
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={formLoading}
                 className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition-colors"
               >
-                {loading ? "Memproses..." : "Daftar Sekarang"}
+                {formLoading ? "Memproses..." : "Daftar Sekarang"}
               </Button>
             </form>
           )}
