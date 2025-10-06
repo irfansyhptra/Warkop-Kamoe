@@ -7,7 +7,7 @@ const ORDER_STORAGE_KEY = "warkop-kamoe-orders";
 
 export const useOrderTracking = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false); // Reserved for future API calls
 
   // Load orders from localStorage on mount
   useEffect(() => {
@@ -74,7 +74,6 @@ export const useOrderTracking = () => {
 
   return {
     orders,
-    loading,
     createOrder,
     getOrder,
     getUserOrders,

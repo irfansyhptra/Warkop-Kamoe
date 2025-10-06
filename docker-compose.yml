@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:8.0
+    container_name: warkop-kamoe-db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: warkop-kamoe
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - warkop-network
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: warkop-kamoe-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/warkop-kamoe
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key}
+      - NODE_ENV=production
+    depends_on:
+      - mongodb
+    networks:
+      - warkop-network
+
+networks:
+  warkop-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local

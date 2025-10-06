@@ -100,6 +100,7 @@ export interface User {
   email: string;
   phone?: string;
   avatar?: string;
+  profileImage?: string;
   favoriteWarkops: string[];
   role?: "admin" | "customer" | "warkop_owner";
   isVerified?: boolean;

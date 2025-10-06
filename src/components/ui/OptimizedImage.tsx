@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface OptimizedImageProps {
   src: string;
@@ -17,9 +18,9 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   className = "",
   fallback = "🖼️",
   fill = false,
-  sizes,
-  width,
-  height,
+  sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
+  width = 400,
+  height = 300,
 }) => {
   const [imageError, setImageError] = React.useState(false);
 
@@ -35,15 +36,29 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     );
   }
 
+  if (fill) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className={className}
+        onError={() => setImageError(true)}
+        loading="lazy"
+      />
+    );
+  }
+
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
-      className={`${fill ? "absolute inset-0 w-full h-full" : ""} ${className}`}
-      onError={() => setImageError(true)}
-      loading="lazy"
       width={width}
       height={height}
+      className={className}
+      onError={() => setImageError(true)}
+      loading="lazy"
     />
   );
 };

@@ -232,11 +232,70 @@ export const useAuth = () => {
     });
   }, []);
 
+  const updateProfile = useCallback(
+    async (updates: { name?: string; phone?: string }) => {
+      try {
+        const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(`${API_URL}/api/auth/update-profile`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updates),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to update profile");
+        }
+
+        // Update local user data
+        const userData = data.data.user;
+        const updatedUser: User = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          phone: userData.phone,
+          role: userData.role,
+          avatar: userData.profileImage,
+          profileImage: userData.profileImage,
+          favoriteWarkops: [],
+          isVerified: userData.isVerified,
+          warkopId: userData.warkopId,
+        };
+
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+
+        setAuthState((prev) => ({
+          ...prev,
+          user: updatedUser,
+        }));
+
+        return true;
+      } catch (error) {
+        console.error("Update profile error:", error);
+        throw error;
+      }
+    },
+    []
+  );
+
   return {
-    ...authState,
+    user: authState.user,
+    isAuthenticated: authState.isAuthenticated,
+    loading: authState.loading,
+    authLoading: authState.loading,
     login,
     register,
     logout,
     updateUser,
+    updateProfile,
   };
 };
