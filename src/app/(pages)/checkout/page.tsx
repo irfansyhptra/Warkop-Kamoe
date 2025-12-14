@@ -1,35 +1,72 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotification } from "@/hooks/useNotification";
+import { useMidtrans, MidtransResult } from "@/hooks/useMidtrans";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+
+type PaymentMethodType = "cod" | "midtrans";
 
 export default function CheckoutPage() {
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: "",
     phone: "",
     address: "",
+    city: "",
     notes: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<
-    "cod" | "qris" | "bank_transfer"
-  >("cod");
-  const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">(
-    "delivery"
-  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>("midtrans");
+  const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">("delivery");
   const [loading, setLoading] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const { cartItems, getTotalPrice, clearCart } = useCart();
-  const { user } = useAuth();
-  const { showSuccess, showError } = useNotification();
+  const { user, isAuthenticated } = useAuth();
+  const { showSuccess, showError, showInfo } = useNotification();
   const router = useRouter();
 
+  // Initialize Midtrans
+  const { isLoaded: midtransLoaded, pay: midtransPay } = useMidtrans({
+    onSuccess: (result: MidtransResult) => {
+      console.log("Payment success:", result);
+      showSuccess("Pembayaran Berhasil", "Pesanan Anda sedang diproses");
+      clearCart();
+      router.push(`/order-tracking/${result.order_id}`);
+    },
+    onPending: (result: MidtransResult) => {
+      console.log("Payment pending:", result);
+      showInfo("Menunggu Pembayaran", "Silakan selesaikan pembayaran Anda");
+      router.push(`/order-tracking/${result.order_id}`);
+    },
+    onError: (result: MidtransResult) => {
+      console.error("Payment error:", result);
+      showError("Pembayaran Gagal", result.status_message || "Terjadi kesalahan");
+      setProcessingPayment(false);
+    },
+    onClose: () => {
+      console.log("Payment popup closed");
+      setProcessingPayment(false);
+    },
+  });
+
+  // Pre-fill user info
+  useEffect(() => {
+    if (user) {
+      setDeliveryInfo((prev) => ({
+        ...prev,
+        name: prev.name || user.name || "",
+        phone: prev.phone || user.phone || "",
+      }));
+    }
+  }, [user]);
+
   const deliveryFee = deliveryMethod === "delivery" ? 5000 : 0;
-  const totalAmount = getTotalPrice() + deliveryFee;
+  const serviceFee = Math.round(getTotalPrice() * 0.01); // 1% service fee
+  const totalAmount = getTotalPrice() + deliveryFee + serviceFee;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -44,13 +81,19 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) {
+    if (!isAuthenticated || !user) {
+      showError("Error", "Silakan login terlebih dahulu");
       router.push("/auth/login");
       return;
     }
 
     if (cartItems.length === 0) {
       showError("Error", "Keranjang kosong");
+      return;
+    }
+
+    if (!deliveryInfo.name || !deliveryInfo.phone) {
+      showError("Error", "Nama dan nomor telepon harus diisi");
       return;
     }
 
@@ -62,23 +105,85 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // Simulasi API call untuk membuat order
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const token = localStorage.getItem("warkop-kamoe-token");
+      
+      // Prepare order items
+      const orderItems = cartItems.map((item) => ({
+        menuItemId: item.id,
+        warkopId: item.warkopId,
+        name: item.menuItem.name,
+        price: item.menuItem.price,
+        quantity: item.quantity,
+        notes: item.notes || "",
+        image: item.menuItem.image || "",
+      }));
 
-      // Buat order ID
-      const orderId = `ORDER-${Date.now()}`;
+      // Create transaction via API
+      const response = await fetch("/api/payment/create-transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: orderItems,
+          warkopId: cartItems[0]?.warkopId,
+          warkopName: cartItems[0]?.warkopName,
+          deliveryInfo: {
+            name: deliveryInfo.name,
+            phone: deliveryInfo.phone,
+            address: deliveryInfo.address,
+            city: deliveryInfo.city,
+            notes: deliveryInfo.notes,
+          },
+          deliveryMethod,
+          deliveryFee,
+          paymentMethod,
+          customerEmail: user.email,
+        }),
+      });
 
-      showSuccess(
-        "Pesanan Berhasil Dibuat",
-        `Pesanan Anda dengan ID ${orderId} sedang diproses`
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Gagal membuat pesanan");
+      }
+
+      // Handle payment based on method
+      if (paymentMethod === "midtrans" && data.data?.snapToken) {
+        setProcessingPayment(true);
+        
+        if (!midtransLoaded) {
+          showError("Error", "Midtrans belum siap, silakan coba lagi");
+          setLoading(false);
+          return;
+        }
+
+        // Open Midtrans Snap popup
+        try {
+          await midtransPay(data.data.snapToken);
+        } catch (paymentError) {
+          console.error("Midtrans payment error:", paymentError);
+          // Error handling is done in useMidtrans callbacks
+        }
+      } else {
+        // COD - direct to order tracking
+        showSuccess(
+          "Pesanan Berhasil Dibuat",
+          `Pesanan ${data.data.orderId} sedang diproses. Bayar saat pesanan diterima.`
+        );
+        clearCart();
+        router.push(`/order-tracking/${data.data.orderId}`);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      showError(
+        "Error",
+        error instanceof Error ? error.message : "Terjadi kesalahan"
       );
-
-      clearCart();
-      router.push(`/order-tracking/${orderId}`);
-    } catch {
-      showError("Error", "Terjadi kesalahan saat memproses pesanan");
     } finally {
       setLoading(false);
+      setProcessingPayment(false);
     }
   };
 
@@ -236,55 +341,96 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-2xl shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-4">Metode Pembayaran</h2>
               <div className="space-y-3">
-                {[
-                  {
-                    value: "cod",
-                    label: "Cash on Delivery (COD)",
-                    desc: "Bayar saat pesanan diterima",
-                  },
-                  {
-                    value: "qris",
-                    label: "QRIS",
-                    desc: "Bayar dengan scan QR code",
-                  },
-                  {
-                    value: "bank_transfer",
-                    label: "Transfer Bank",
-                    desc: "Transfer ke rekening toko",
-                  },
-                ].map((method) => (
-                  <label
-                    key={method.value}
-                    className="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
+                {/* Midtrans Payment */}
+                <label
+                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors ${
+                    paymentMethod === "midtrans" ? "border-amber-500 bg-amber-50" : "border-gray-200"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="midtrans"
+                    checked={paymentMethod === "midtrans"}
+                    onChange={() => setPaymentMethod("midtrans")}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
+                      paymentMethod === "midtrans"
+                        ? "border-amber-600 bg-amber-600"
+                        : "border-gray-300"
+                    }`}
                   >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={method.value}
-                      checked={paymentMethod === method.value}
-                      onChange={(e) =>
-                        setPaymentMethod(e.target.value as typeof paymentMethod)
-                      }
-                      className="sr-only"
-                    />
-                    <div
-                      className={`w-4 h-4 rounded-full border-2 mr-3 ${
-                        paymentMethod === method.value
-                          ? "border-amber-600 bg-amber-600"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      {paymentMethod === method.value && (
-                        <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5"></div>
-                      )}
+                    {paymentMethod === "midtrans" && (
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">Pembayaran Online</div>
+                    <div className="text-sm text-gray-600">
+                      QRIS, GoPay, ShopeePay, Transfer Bank, Kartu Kredit
                     </div>
-                    <div>
-                      <div className="font-medium">{method.label}</div>
-                      <div className="text-sm text-gray-600">{method.desc}</div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">QRIS</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">GoPay</span>
+                      <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">ShopeePay</span>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Bank Transfer</span>
                     </div>
-                  </label>
-                ))}
+                  </div>
+                  <div className="text-2xl">💳</div>
+                </label>
+
+                {/* COD Payment */}
+                <label
+                  className={`flex items-center p-4 border-2 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors ${
+                    paymentMethod === "cod" ? "border-amber-500 bg-amber-50" : "border-gray-200"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === "cod"}
+                    onChange={() => setPaymentMethod("cod")}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
+                      paymentMethod === "cod"
+                        ? "border-amber-600 bg-amber-600"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    {paymentMethod === "cod" && (
+                      <div className="w-2 h-2 bg-white rounded-full"></div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-900">Cash on Delivery (COD)</div>
+                    <div className="text-sm text-gray-600">
+                      Bayar tunai saat pesanan diterima
+                    </div>
+                  </div>
+                  <div className="text-2xl">💵</div>
+                </label>
               </div>
+
+              {/* Payment Info */}
+              {paymentMethod === "midtrans" && (
+                <div className="mt-4 p-3 bg-blue-50 rounded-xl">
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-500">ℹ️</span>
+                    <div className="text-sm text-blue-700">
+                      <p className="font-medium">Pembayaran Aman via Midtrans</p>
+                      <p className="mt-1">
+                        Anda akan diarahkan ke halaman pembayaran Midtrans yang aman.
+                        Pilih metode pembayaran favorit Anda.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -329,6 +475,10 @@ export default function CheckoutPage() {
                   <span>Ongkir</span>
                   <span>Rp {deliveryFee.toLocaleString("id-ID")}</span>
                 </div>
+                <div className="flex justify-between text-sm">
+                  <span>Biaya Layanan (1%)</span>
+                  <span>Rp {serviceFee.toLocaleString("id-ID")}</span>
+                </div>
                 <div className="flex justify-between font-bold text-lg border-t pt-2">
                   <span>Total</span>
                   <span className="text-amber-600">
@@ -342,10 +492,44 @@ export default function CheckoutPage() {
                 variant="primary"
                 size="lg"
                 className="w-full mt-6"
-                disabled={loading}
+                disabled={loading || processingPayment}
               >
-                {loading ? "Memproses..." : "Buat Pesanan"}
+                {loading || processingPayment ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    {processingPayment ? "Memproses Pembayaran..." : "Memproses..."}
+                  </span>
+                ) : paymentMethod === "midtrans" ? (
+                  "Bayar Sekarang"
+                ) : (
+                  "Buat Pesanan (COD)"
+                )}
               </Button>
+
+              {/* Payment Security Badge */}
+              {paymentMethod === "midtrans" && (
+                <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                  <span>Pembayaran aman diproses oleh Midtrans</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

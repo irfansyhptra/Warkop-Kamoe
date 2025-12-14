@@ -1,100 +1,180 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { Order } from "@/types";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/hooks/useAuth";
+import { useMidtrans } from "@/hooks/useMidtrans";
 
-// Enhanced Mock data
-const mockOrder: Order = {
-  id: "ORDER-1735516800000",
-  userId: "customer-1",
-  items: [
-    {
-      id: "cart-1",
-      menuItem: {
-        id: "menu-1",
-        name: "Kopi Hitam Special",
-        price: 12000,
-        description: "Kopi hitam robusta pilihan dari Lampung",
-        category: "Kopi",
-        image: "/images/kopi-hitam.jpg",
-        availability: "available",
-        isRecommended: true,
-      },
-      warkopId: "warkop-1",
-      warkopName: "Kopi Kita",
-      quantity: 2,
-      notes: "Gula sedikit",
-    },
-    {
-      id: "cart-2",
-      menuItem: {
-        id: "menu-4",
-        name: "Nasi Goreng Kamoe",
-        price: 22000,
-        description: "Nasi goreng khas warung dengan bumbu rempah pilihan",
-        category: "Makanan Berat",
-        image: "/images/nasgor.jpg",
-        availability: "available",
-        isRecommended: true,
-      },
-      warkopId: "warkop-1",
-      warkopName: "Kopi Kita",
-      quantity: 1,
-      notes: "Pedas sedang, telur mata sapi",
-    },
-  ],
-  totalAmount: 46000,
-  orderDate: "2024-12-29T10:30:00Z",
-  status: "preparing",
+// Order interface matching the backend model
+interface OrderData {
+  _id: string;
+  orderId: string;
+  userId: string;
+  warkopId: string;
+  warkopName: string;
+  items: {
+    menuItemId: string;
+    warkopId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    notes?: string;
+    image?: string;
+  }[];
+  subtotal: number;
+  deliveryFee: number;
+  serviceFee: number;
+  discount: number;
+  totalAmount: number;
+  status: "pending" | "confirmed" | "preparing" | "ready" | "on_delivery" | "delivered" | "cancelled";
   deliveryInfo: {
-    name: "John Doe",
-    phone: "08123456789",
-    address: "Jl. Kebon Jeruk No. 45, Jakarta Barat",
-    notes: "Tolong dipisah antara makanan dan minuman",
-  },
-  paymentMethod: "cod",
-  estimatedDeliveryTime: "11:15",
-};
+    name: string;
+    phone: string;
+    address?: string;
+    city?: string;
+    notes?: string;
+  };
+  deliveryDetails: {
+    method: "delivery" | "pickup";
+    fee: number;
+    estimatedTime?: string;
+  };
+  paymentStatus: "pending" | "paid" | "failed" | "refunded" | "expired";
+  paymentDetails: {
+    method: "cod" | "midtrans";
+    midtransPaymentType?: string;
+    transactionId?: string;
+    snapToken?: string;
+    snapRedirectUrl?: string;
+    vaNumber?: string;
+    bank?: string;
+    paidAt?: string;
+  };
+  orderHistory: {
+    status: string;
+    timestamp: string;
+    notes?: string;
+  }[];
+  estimatedDeliveryTime?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const statusSteps = [
-  { key: "pending", label: "Pesanan Diterima", icon: "📝" },
-  { key: "confirmed", label: "Dikonfirmasi", icon: "✅" },
-  { key: "preparing", label: "Sedang Diproses", icon: "👨‍🍳" },
-  { key: "ready", label: "Siap Diantar", icon: "📦" },
+  { key: "pending", label: "Menunggu Pembayaran", icon: "�" },
+  { key: "confirmed", label: "Pesanan Dikonfirmasi", icon: "✅" },
+  { key: "preparing", label: "Sedang Disiapkan", icon: "👨‍🍳" },
+  { key: "ready", label: "Siap Diambil/Diantar", icon: "📦" },
+  { key: "on_delivery", label: "Sedang Diantar", icon: "🛵" },
   { key: "delivered", label: "Selesai", icon: "🎉" },
 ];
 
+const paymentStatusLabels: Record<string, { label: string; color: string }> = {
+  pending: { label: "Menunggu Pembayaran", color: "bg-yellow-100 text-yellow-800" },
+  paid: { label: "Sudah Dibayar", color: "bg-green-100 text-green-800" },
+  failed: { label: "Pembayaran Gagal", color: "bg-red-100 text-red-800" },
+  refunded: { label: "Dana Dikembalikan", color: "bg-blue-100 text-blue-800" },
+  expired: { label: "Kedaluwarsa", color: "bg-gray-100 text-gray-800" },
+};
+
 export default function OrderTrackingPage() {
   const params = useParams();
-  const [order, setOrder] = useState<Order | null>(null);
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { pay: midtransPay, isLoaded: midtransLoaded } = useMidtrans();
+  
+  const [order, setOrder] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [retryingPayment, setRetryingPayment] = useState(false);
+
+  const orderId = params.id as string;
+
+  // Fetch order data
+  const fetchOrder = useCallback(async () => {
+    if (!orderId) return;
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("warkop-kamoe-token");
+      
+      const response = await fetch(`/api/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("Pesanan tidak ditemukan");
+        } else {
+          setError("Gagal memuat data pesanan");
+        }
+        return;
+      }
+
+      const data = await response.json();
+      setOrder(data.data.order);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching order:", err);
+      setError("Terjadi kesalahan saat memuat pesanan");
+    } finally {
+      setLoading(false);
+    }
+  }, [orderId]);
 
   useEffect(() => {
-    // Simulasi loading order data
-    setTimeout(() => {
-      setOrder(mockOrder);
-      setLoading(false);
-    }, 1000);
-  }, [params.id]);
+    fetchOrder();
+    
+    // Poll for updates every 30 seconds if order is not completed
+    const interval = setInterval(() => {
+      if (order && !["delivered", "cancelled"].includes(order.status)) {
+        fetchOrder();
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [fetchOrder, order?.status]);
+
+  // Retry payment function
+  const handleRetryPayment = async () => {
+    if (!order?.paymentDetails?.snapToken || !midtransLoaded) return;
+
+    setRetryingPayment(true);
+    try {
+      await midtransPay(order.paymentDetails.snapToken);
+      fetchOrder(); // Refresh order data after payment
+    } catch (err) {
+      console.error("Payment retry error:", err);
+    } finally {
+      setRetryingPayment(false);
+    }
+  };
 
   const getCurrentStatusIndex = () => {
     if (!order) return 0;
+    if (order.status === "cancelled") return -1;
     return statusSteps.findIndex((step) => step.key === order.status);
   };
 
-  const getPaymentMethodLabel = (method: string) => {
-    switch (method) {
-      case "cod":
-        return "Cash on Delivery";
-      case "qris":
-        return "QRIS";
-      case "bank_transfer":
-        return "Transfer Bank";
-      default:
-        return method;
+  const getPaymentMethodLabel = (method: string, paymentType?: string) => {
+    if (method === "cod") return "Cash on Delivery";
+    if (paymentType) {
+      const typeLabels: Record<string, string> = {
+        bank_transfer: "Transfer Bank",
+        gopay: "GoPay",
+        shopeepay: "ShopeePay",
+        qris: "QRIS",
+        credit_card: "Kartu Kredit",
+        bca_va: "BCA Virtual Account",
+        bni_va: "BNI Virtual Account",
+        bri_va: "BRI Virtual Account",
+      };
+      return typeLabels[paymentType] || paymentType;
     }
+    return "Online Payment";
   };
 
   if (loading) {
@@ -117,10 +197,10 @@ export default function OrderTrackingPage() {
             Pesanan Tidak Ditemukan
           </h1>
           <p className="text-gray-600 mb-6">
-            ID pesanan tidak valid atau sudah tidak ada
+            {error || "ID pesanan tidak valid atau sudah tidak ada"}
           </p>
-          <Button onClick={() => window.history.back()} variant="primary">
-            Kembali
+          <Button onClick={() => router.push("/")} variant="primary">
+            Kembali ke Beranda
           </Button>
         </div>
       </div>
@@ -128,23 +208,25 @@ export default function OrderTrackingPage() {
   }
 
   const currentStatusIndex = getCurrentStatusIndex();
+  const paymentInfo = paymentStatusLabels[order.paymentStatus] || paymentStatusLabels.pending;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
+        {/* Order Header */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-gray-900">Lacak Pesanan</h1>
             <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
-              ID: {order.id}
+              {order.orderId}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Tanggal Pesanan:</span>
               <p className="font-medium">
-                {new Date(order.orderDate).toLocaleDateString("id-ID", {
+                {new Date(order.createdAt).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -156,16 +238,50 @@ export default function OrderTrackingPage() {
             <div>
               <span className="text-gray-600">Estimasi:</span>
               <p className="font-medium">
-                {order.estimatedDeliveryTime || "-"}
+                {order.deliveryDetails?.estimatedTime || order.estimatedDeliveryTime || "-"}
               </p>
             </div>
             <div>
               <span className="text-gray-600">Pembayaran:</span>
               <p className="font-medium">
-                {getPaymentMethodLabel(order.paymentMethod)}
+                {getPaymentMethodLabel(order.paymentDetails?.method || "cod", order.paymentDetails?.midtransPaymentType)}
+              </p>
+            </div>
+            <div>
+              <span className="text-gray-600">Status Bayar:</span>
+              <p className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${paymentInfo.color}`}>
+                {paymentInfo.label}
               </p>
             </div>
           </div>
+
+          {/* Payment Action for Pending */}
+          {order.paymentStatus === "pending" && order.paymentDetails?.method === "midtrans" && order.paymentDetails?.snapToken && (
+            <div className="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-yellow-800">Pembayaran Belum Selesai</p>
+                  <p className="text-sm text-yellow-700">Silakan selesaikan pembayaran Anda</p>
+                </div>
+                <Button
+                  onClick={handleRetryPayment}
+                  variant="primary"
+                  size="sm"
+                  disabled={retryingPayment || !midtransLoaded}
+                >
+                  {retryingPayment ? "Memproses..." : "Bayar Sekarang"}
+                </Button>
+              </div>
+              
+              {/* VA Number Info */}
+              {order.paymentDetails?.vaNumber && (
+                <div className="mt-3 p-3 bg-white rounded-lg">
+                  <p className="text-sm text-gray-600">Virtual Account ({order.paymentDetails.bank?.toUpperCase()}):</p>
+                  <p className="font-mono font-bold text-lg">{order.paymentDetails.vaNumber}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Status Tracking */}
@@ -232,18 +348,18 @@ export default function OrderTrackingPage() {
         {/* Detail Pesanan */}
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Detail Pesanan</h2>
+          <p className="text-sm text-gray-600 mb-4">dari {order.warkopName}</p>
 
           <div className="space-y-4">
-            {order.items.map((item) => (
+            {order.items.map((item, index) => (
               <div
-                key={item.id}
+                key={`${item.menuItemId}-${index}`}
                 className="flex justify-between items-start border-b border-gray-100 pb-4 last:border-b-0"
               >
                 <div className="flex-1">
-                  <h3 className="font-medium">{item.menuItem.name}</h3>
-                  <p className="text-gray-600 text-sm">{item.warkopName}</p>
+                  <h3 className="font-medium">{item.name}</h3>
                   <p className="text-gray-600 text-sm">
-                    Rp {item.menuItem.price.toLocaleString("id-ID")} ×{" "}
+                    Rp {item.price.toLocaleString("id-ID")} ×{" "}
                     {item.quantity}
                   </p>
                   {item.notes && (
@@ -254,7 +370,7 @@ export default function OrderTrackingPage() {
                 </div>
                 <div className="font-medium">
                   Rp{" "}
-                  {(item.menuItem.price * item.quantity).toLocaleString(
+                  {(item.price * item.quantity).toLocaleString(
                     "id-ID"
                   )}
                 </div>
@@ -262,8 +378,28 @@ export default function OrderTrackingPage() {
             ))}
           </div>
 
-          <div className="border-t mt-4 pt-4">
-            <div className="flex justify-between font-bold text-lg">
+          <div className="border-t mt-4 pt-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Subtotal</span>
+              <span>Rp {order.subtotal.toLocaleString("id-ID")}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span>Ongkir</span>
+              <span>Rp {order.deliveryFee.toLocaleString("id-ID")}</span>
+            </div>
+            {order.serviceFee > 0 && (
+              <div className="flex justify-between text-sm">
+                <span>Biaya Layanan</span>
+                <span>Rp {order.serviceFee.toLocaleString("id-ID")}</span>
+              </div>
+            )}
+            {order.discount > 0 && (
+              <div className="flex justify-between text-sm text-green-600">
+                <span>Diskon</span>
+                <span>- Rp {order.discount.toLocaleString("id-ID")}</span>
+              </div>
+            )}
+            <div className="flex justify-between font-bold text-lg border-t pt-2">
               <span>Total Pembayaran</span>
               <span className="text-amber-600">
                 Rp {order.totalAmount.toLocaleString("id-ID")}
@@ -273,61 +409,101 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Informasi Pengiriman */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <h2 className="text-xl font-semibold mb-4">Informasi Pengiriman</h2>
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4">
+            {order.deliveryDetails?.method === "pickup" ? "Informasi Pengambilan" : "Informasi Pengiriman"}
+          </h2>
 
           <div className="space-y-2">
-            <div>
-              <span className="text-gray-600">Nama:</span>
-              <span className="ml-2 font-medium">
-                {order.deliveryInfo.name}
-              </span>
+            <div className="flex">
+              <span className="text-gray-600 w-24">Nama:</span>
+              <span className="font-medium">{order.deliveryInfo.name}</span>
             </div>
-            <div>
-              <span className="text-gray-600">Telepon:</span>
-              <span className="ml-2 font-medium">
-                {order.deliveryInfo.phone}
-              </span>
+            <div className="flex">
+              <span className="text-gray-600 w-24">Telepon:</span>
+              <span className="font-medium">{order.deliveryInfo.phone}</span>
             </div>
-            <div>
-              <span className="text-gray-600">Alamat:</span>
-              <span className="ml-2 font-medium">
-                {order.deliveryInfo.address}
-              </span>
-            </div>
-            {order.deliveryInfo.notes && (
-              <div>
-                <span className="text-gray-600">Catatan:</span>
-                <span className="ml-2 font-medium">
-                  {order.deliveryInfo.notes}
-                </span>
+            {order.deliveryDetails?.method === "delivery" && order.deliveryInfo.address && (
+              <div className="flex">
+                <span className="text-gray-600 w-24">Alamat:</span>
+                <span className="font-medium">{order.deliveryInfo.address}</span>
               </div>
             )}
+            {order.deliveryInfo.notes && (
+              <div className="flex">
+                <span className="text-gray-600 w-24">Catatan:</span>
+                <span className="font-medium">{order.deliveryInfo.notes}</span>
+              </div>
+            )}
+            <div className="flex">
+              <span className="text-gray-600 w-24">Metode:</span>
+              <span className="font-medium capitalize">
+                {order.deliveryDetails?.method === "pickup" ? "Ambil Sendiri" : "Diantar"}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        {order.status === "delivered" && (
-          <div className="mt-6 text-center">
-            <Button
-              onClick={() => {
-                /* Implement rating/review */
-              }}
-              variant="primary"
-              className="mr-4"
-            >
-              Beri Rating & Ulasan
-            </Button>
-            <Button
-              onClick={() => {
-                /* Implement reorder */
-              }}
-              variant="outline"
-            >
-              Pesan Lagi
-            </Button>
+        {/* Order History Timeline */}
+        {order.orderHistory && order.orderHistory.length > 0 && (
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Riwayat Pesanan</h2>
+            <div className="space-y-4">
+              {order.orderHistory.map((history, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="w-2 h-2 bg-amber-500 rounded-full mt-2"></div>
+                  <div>
+                    <p className="font-medium capitalize">{history.status.replace(/_/g, " ")}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(history.timestamp).toLocaleString("id-ID")}
+                    </p>
+                    {history.notes && (
+                      <p className="text-sm text-gray-600">{history.notes}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {order.status === "delivered" && (
+            <>
+              <Button
+                onClick={() => {/* Implement rating/review */}}
+                variant="primary"
+              >
+                ⭐ Beri Rating & Ulasan
+              </Button>
+              <Button
+                onClick={() => router.push("/")}
+                variant="outline"
+              >
+                🛒 Pesan Lagi
+              </Button>
+            </>
+          )}
+          
+          {order.status === "cancelled" && (
+            <Button
+              onClick={() => router.push("/")}
+              variant="primary"
+            >
+              Kembali ke Beranda
+            </Button>
+          )}
+
+          {!["delivered", "cancelled"].includes(order.status) && (
+            <Button
+              onClick={fetchOrder}
+              variant="outline"
+            >
+              🔄 Refresh Status
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
