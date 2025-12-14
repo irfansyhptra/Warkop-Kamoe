@@ -50,6 +50,21 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
+          <div className="inline-block p-3 bg-amber-100 rounded-full mb-4">
+            <svg
+              className="w-12 h-12 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Masuk</h1>
           <p className="text-gray-600">Masuk ke akun Warkop Kamoe Anda</p>
         </div>
@@ -62,6 +77,7 @@ export default function LoginPage() {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Masukkan email Anda"
+            variant="light"
             required
           />
 
@@ -72,6 +88,7 @@ export default function LoginPage() {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Masukkan password Anda"
+            variant="light"
             required
           />
 
@@ -98,13 +115,20 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="mt-4 text-center">
-          <p className="text-sm text-gray-500">Demo Accounts:</p>
-          <div className="text-xs text-gray-400 mt-2 space-y-1">
-            <p>Admin: admin@warkop.com</p>
-            <p>Owner: owner@example.com</p>
-            <p>Customer: customer@example.com</p>
-            <p>Password: any</p>
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm font-semibold text-blue-900 mb-2">
+            📋 Demo Accounts:
+          </p>
+          <div className="text-xs space-y-2">
+            <div className="bg-white p-2 rounded border border-blue-100">
+              <p className="font-semibold text-blue-900">Admin:</p>
+              <p className="text-gray-700">📧 admin@warkopkamoe.com</p>
+              <p className="text-gray-700">🔑 Admin123</p>
+            </div>
+            <div className="bg-white p-2 rounded border border-blue-100">
+              <p className="font-semibold text-blue-900">Owner/Customer:</p>
+              <p className="text-gray-700">Register untuk akun baru</p>
+            </div>
           </div>
         </div>
       </div>

@@ -73,6 +73,21 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 flex items-center justify-center px-4 py-8">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
+          <div className="inline-block p-3 bg-amber-100 rounded-full mb-4">
+            <svg
+              className="w-12 h-12 text-amber-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+              />
+            </svg>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Daftar</h1>
           <p className="text-gray-600">Buat akun Warkop Kamoe baru</p>
         </div>
@@ -85,6 +100,7 @@ export default function RegisterPage() {
             value={formData.name}
             onChange={handleInputChange}
             placeholder="Masukkan nama lengkap"
+            variant="light"
             required
           />
 
@@ -95,6 +111,7 @@ export default function RegisterPage() {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Masukkan email Anda"
+            variant="light"
             required
           />
 
@@ -105,17 +122,18 @@ export default function RegisterPage() {
             value={formData.phone}
             onChange={handleInputChange}
             placeholder="Masukkan nomor telepon"
+            variant="light"
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-gray-800 mb-2">
               Tipe Akun
             </label>
             <select
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+              className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-400 rounded-lg text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white hover:border-gray-500 transition-all"
               required
             >
               <option value="customer">Customer</option>
@@ -130,6 +148,7 @@ export default function RegisterPage() {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Masukkan password (min. 6 karakter)"
+            variant="light"
             required
           />
 
@@ -140,6 +159,7 @@ export default function RegisterPage() {
             value={formData.confirmPassword}
             onChange={handleInputChange}
             placeholder="Konfirmasi password Anda"
+            variant="light"
             required
           />
 

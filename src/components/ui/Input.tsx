@@ -37,11 +37,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const lightClasses = `
     w-full px-4 py-3 
-    bg-white 
-    border-2 border-gray-300 
+    bg-gray-50 
+    border-2 border-gray-400 
     rounded-lg 
-    text-gray-800 placeholder-gray-500
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500
+    text-gray-900 placeholder-gray-500 font-medium
+    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white
+    hover:border-gray-500
     transition-all duration-200
     ${leftIcon ? "pl-12" : ""}
     ${rightIcon ? "pr-12" : ""}
@@ -54,8 +55,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="space-y-2">
         {label && (
           <label
-            className={`block text-sm font-medium ${
-              variant === "dark" ? "text-amber-100" : "text-gray-700"
+            className={`block text-sm font-semibold ${
+              variant === "dark" ? "text-amber-100" : "text-gray-800"
             }`}
           >
             {label}

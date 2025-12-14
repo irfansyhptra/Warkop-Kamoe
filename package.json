@@ -10,7 +10,9 @@
     "mongodb:start": "powershell -ExecutionPolicy Bypass -File ./start-mongodb.ps1",
     "mongodb:stop": "powershell -ExecutionPolicy Bypass -File ./stop-mongodb.ps1",
     "mongodb:status": "powershell -ExecutionPolicy Bypass -File ./status-mongodb.ps1",
-    "setup:warkop-owner": "node setup-warkop-owner.js"
+    "setup:warkop-owner": "node setup-warkop-owner.js",
+    "create-admin": "node scripts/create-admin.js",
+    "reset-admin": "node scripts/reset-admin-password.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
