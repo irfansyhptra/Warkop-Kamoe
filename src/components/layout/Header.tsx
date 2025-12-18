@@ -171,17 +171,17 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-amber-200/20 bg-gradient-to-r from-amber-900/40 to-amber-800/40 backdrop-blur-2xl">
+    <header className="sticky top-0 z-40 border-b border-white/5 bg-black/40 backdrop-blur-xl shadow-2xl">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/40 transition-all duration-300">
               <span className="text-white font-bold text-xl">☕</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-amber-50">Warkop Kamoe</h1>
-              <p className="text-xs text-amber-200/80">Marketplace</p>
+              <h1 className="text-xl font-bold text-white">Warkop Kamoe</h1>
+              <p className="text-xs text-zinc-500">Marketplace</p>
             </div>
           </Link>
 
@@ -189,21 +189,24 @@ const Header: React.FC = () => {
           <nav className="hidden md:flex items-center gap-8">
             <Link
               href="/"
-              className="text-amber-100 hover:text-amber-50 transition-colors"
+              className="text-zinc-400 hover:text-white transition-colors font-medium relative group"
             >
               Home
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-violet-500 to-cyan-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
             <Link
               href="/(pages)/favorites"
-              className="text-amber-100 hover:text-amber-50 transition-colors"
+              className="text-zinc-400 hover:text-white transition-colors font-medium relative group"
             >
               Favorites
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-violet-500 to-cyan-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
             <Link
               href="/(pages)/order-tracking"
-              className="text-amber-100 hover:text-amber-50 transition-colors"
+              className="text-zinc-400 hover:text-white transition-colors font-medium relative group"
             >
               Tracking
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-violet-500 to-cyan-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
           </nav>
 
@@ -218,11 +221,12 @@ const Header: React.FC = () => {
                 placeholder="Cari warkop atau menu..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pr-12"
+                className="pr-12 bg-white/5 border-white/10 text-white placeholder-zinc-500 focus:border-violet-500/50 focus:bg-white/10"
+                variant="dark"
               />
               <button
                 type="submit"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-amber-200/60 hover:text-amber-100 transition-colors"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-zinc-500 hover:text-violet-400 transition-colors"
               >
                 <SearchIcon />
               </button>
@@ -233,16 +237,16 @@ const Header: React.FC = () => {
           <div className="hidden md:flex items-center gap-4">
             <Link
               href="/(pages)/favorites"
-              className="p-2 rounded-full hover:bg-amber-400/10 transition-colors text-amber-200 hover:text-amber-100"
+              className="p-2 rounded-full hover:bg-white/5 transition-all duration-300 text-zinc-400 hover:text-pink-400 hover:shadow-lg hover:shadow-pink-500/10"
             >
               <HeartIcon />
             </Link>
             <Link
               href="/(pages)/cart"
-              className="relative p-2 rounded-full hover:bg-amber-400/10 transition-colors text-amber-200 hover:text-amber-100"
+              className="relative p-2 rounded-full hover:bg-white/5 transition-all duration-300 text-zinc-400 hover:text-cyan-400 hover:shadow-lg hover:shadow-cyan-500/10"
             >
               <CartIcon />
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-violet-500 to-purple-600 text-white text-xs rounded-full flex items-center justify-center font-semibold shadow-lg shadow-violet-500/30">
                 0
               </span>
             </Link>
@@ -252,7 +256,7 @@ const Header: React.FC = () => {
               <div className="relative" ref={profileMenuRef}>
                 <button
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  className="flex items-center gap-2 p-2 rounded-full hover:bg-amber-400/10 transition-colors"
+                  className="flex items-center gap-2 p-2 rounded-full hover:bg-white/5 transition-all duration-300"
                 >
                   {user.profileImage || user.avatar ? (
                     <Image
@@ -260,36 +264,36 @@ const Header: React.FC = () => {
                       alt={user.name}
                       width={32}
                       height={32}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-amber-400"
+                      className="w-8 h-8 rounded-full object-cover ring-2 ring-violet-500/50"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center border-2 border-amber-400">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center ring-2 ring-violet-500/50">
                       <span className="text-white text-sm font-semibold">
                         {getInitials(user.name)}
                       </span>
                     </div>
                   )}
-                  <span className="text-amber-100 font-medium hidden lg:block">
+                  <span className="text-white font-medium hidden lg:block">
                     {user.name}
                   </span>
                 </button>
 
                 {/* Dropdown Menu */}
                 {isProfileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-amber-200 overflow-hidden z-50">
-                    <div className="p-4 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200">
-                      <p className="font-semibold text-amber-900">
+                  <div className="absolute right-0 mt-2 w-56 bg-zinc-900/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50">
+                    <div className="p-4 bg-gradient-to-r from-violet-500/10 to-purple-500/10 border-b border-white/5">
+                      <p className="font-semibold text-white">
                         {user.name}
                       </p>
-                      <p className="text-sm text-amber-700">{user.email}</p>
-                      <p className="text-xs text-amber-600 mt-1 capitalize">
+                      <p className="text-sm text-zinc-400">{user.email}</p>
+                      <p className="text-xs text-violet-400 mt-1 capitalize">
                         {user.role}
                       </p>
                     </div>
                     <div className="py-2">
                       <Link
                         href="/profile"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-amber-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
                         <UserIcon />
@@ -297,7 +301,7 @@ const Header: React.FC = () => {
                       </Link>
                       <Link
                         href="/(pages)/order-tracking"
-                        className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-amber-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
                         <svg
@@ -318,7 +322,7 @@ const Header: React.FC = () => {
                       {user.role === "admin" && (
                         <Link
                           href="/admin/dashboard"
-                          className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-amber-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
                           <svg
@@ -340,7 +344,7 @@ const Header: React.FC = () => {
                       {user.role === "warkop_owner" && (
                         <Link
                           href="/warkop-owner/dashboard"
-                          className="flex items-center gap-3 px-4 py-2 text-gray-700 hover:bg-amber-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
                           onClick={() => setIsProfileMenuOpen(false)}
                         >
                           <svg
@@ -360,10 +364,10 @@ const Header: React.FC = () => {
                         </Link>
                       )}
                     </div>
-                    <div className="border-t border-amber-200">
+                    <div className="border-t border-white/5">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors w-full"
+                        className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full"
                       >
                         <LogoutIcon />
                         <span>Logout</span>
@@ -373,14 +377,14 @@ const Header: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Link href="/auth?tab=login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white border-white/10 hover:bg-white/5">
                     Login
                   </Button>
                 </Link>
                 <Link href="/auth?tab=register">
-                  <Button variant="primary" size="sm">
+                  <Button variant="primary" size="sm" className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-500/20">
                     Register
                   </Button>
                 </Link>
@@ -391,7 +395,7 @@ const Header: React.FC = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-full hover:bg-amber-400/10 transition-colors text-amber-200"
+            className="md:hidden p-2 rounded-full hover:bg-white/5 transition-all duration-300 text-zinc-400 hover:text-white"
           >
             {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
@@ -405,11 +409,12 @@ const Header: React.FC = () => {
               placeholder="Cari warkop atau menu..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-12"
+              className="pr-12 bg-white/5 border-white/10 text-white placeholder-zinc-500"
+              variant="dark"
             />
             <button
               type="submit"
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-amber-200/60 hover:text-amber-100 transition-colors"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-zinc-500 hover:text-violet-400 transition-colors"
             >
               <SearchIcon />
             </button>
@@ -418,10 +423,10 @@ const Header: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-amber-200/20 py-4 space-y-4">
+          <div className="md:hidden border-t border-white/5 py-4 space-y-4 bg-zinc-900/50 backdrop-blur-lg -mx-4 px-4">
             {/* User Profile for Mobile */}
             {isAuthenticated && user && (
-              <div className="pb-4 border-b border-amber-200/20">
+              <div className="pb-4 border-b border-white/5">
                 <div className="flex items-center gap-3 px-2">
                   {user.profileImage || user.avatar ? (
                     <Image
@@ -429,19 +434,19 @@ const Header: React.FC = () => {
                       alt={user.name}
                       width={48}
                       height={48}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-amber-400"
+                      className="w-12 h-12 rounded-full object-cover ring-2 ring-violet-500/50"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center border-2 border-amber-400">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center ring-2 ring-violet-500/50">
                       <span className="text-white font-semibold">
                         {getInitials(user.name)}
                       </span>
                     </div>
                   )}
                   <div>
-                    <p className="font-semibold text-amber-50">{user.name}</p>
-                    <p className="text-sm text-amber-200">{user.email}</p>
-                    <p className="text-xs text-amber-300 mt-0.5 capitalize">
+                    <p className="font-semibold text-white">{user.name}</p>
+                    <p className="text-sm text-zinc-400">{user.email}</p>
+                    <p className="text-xs text-violet-400 mt-0.5 capitalize">
                       {user.role}
                     </p>
                   </div>
@@ -452,25 +457,25 @@ const Header: React.FC = () => {
             <nav className="space-y-3">
               <Link
                 href="/"
-                className="block text-amber-100 hover:text-amber-50 transition-colors"
+                className="block text-zinc-300 hover:text-white transition-colors"
               >
                 Home
               </Link>
               <Link
                 href="/(pages)/favorites"
-                className="block text-amber-100 hover:text-amber-50 transition-colors"
+                className="block text-zinc-300 hover:text-white transition-colors"
               >
                 Favorites
               </Link>
               <Link
                 href="/(pages)/order-tracking"
-                className="block text-amber-100 hover:text-amber-50 transition-colors"
+                className="block text-zinc-300 hover:text-white transition-colors"
               >
                 Order Tracking
               </Link>
               <Link
                 href="/(pages)/cart"
-                className="flex items-center gap-2 text-amber-100 hover:text-amber-50 transition-colors"
+                className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors"
               >
                 <CartIcon />
                 <span>Keranjang (0)</span>
@@ -481,7 +486,7 @@ const Header: React.FC = () => {
                 <>
                   <Link
                     href="/profile"
-                    className="flex items-center gap-2 text-amber-100 hover:text-amber-50 transition-colors"
+                    className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors"
                   >
                     <UserIcon />
                     <span>Profil Saya</span>
@@ -489,7 +494,7 @@ const Header: React.FC = () => {
                   {user.role === "admin" && (
                     <Link
                       href="/admin/dashboard"
-                      className="flex items-center gap-2 text-amber-100 hover:text-amber-50 transition-colors"
+                      className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors"
                     >
                       <svg
                         className="w-6 h-6"
@@ -510,7 +515,7 @@ const Header: React.FC = () => {
                   {user.role === "warkop_owner" && (
                     <Link
                       href="/warkop-owner/dashboard"
-                      className="flex items-center gap-2 text-amber-100 hover:text-amber-50 transition-colors"
+                      className="flex items-center gap-2 text-zinc-300 hover:text-white transition-colors"
                     >
                       <svg
                         className="w-6 h-6"
@@ -534,11 +539,11 @@ const Header: React.FC = () => {
 
             {/* Auth Buttons or Logout for Mobile */}
             {isAuthenticated && user ? (
-              <div className="pt-4 border-t border-amber-200/20">
+              <div className="pt-4 border-t border-white/5">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="w-full text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                  className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10"
                   onClick={handleLogout}
                 >
                   <div className="flex items-center justify-center gap-2">
@@ -548,14 +553,14 @@ const Header: React.FC = () => {
                 </Button>
               </div>
             ) : (
-              <div className="flex gap-2 pt-4 border-t border-amber-200/20">
+              <div className="flex gap-2 pt-4 border-t border-white/5">
                 <Link href="/auth?tab=login" className="flex-1">
-                  <Button variant="ghost" size="sm" className="w-full">
+                  <Button variant="ghost" size="sm" className="w-full text-zinc-400 hover:text-white border-white/10">
                     Login
                   </Button>
                 </Link>
                 <Link href="/auth?tab=register" className="flex-1">
-                  <Button variant="primary" size="sm" className="w-full">
+                  <Button variant="primary" size="sm" className="w-full bg-gradient-to-r from-violet-500 to-purple-600">
                     Register
                   </Button>
                 </Link>

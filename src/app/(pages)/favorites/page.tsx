@@ -7,7 +7,6 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotification } from "@/hooks/useNotification";
 import { Warkop } from "@/types";
-import { warkopList } from "@/data";
 import WarkopCard from "@/components/ui/WarkopCard";
 import Button from "@/components/ui/Button";
 
@@ -25,17 +24,34 @@ export default function FavoritesPage() {
 
   useEffect(() => {
     if (!user) return;
+    // Fetch warkops from API then filter by favorites
+    const fetchFavorites = async () => {
+      try {
+        setLoading(true);
+        // request a larger page size to include most warkops in one request
+        const res = await fetch("/api/warkops?limit=100");
+        if (!res.ok) {
+          console.error("Failed fetching warkops for favorites", await res.text());
+          setFavoriteWarkops([]);
+          return;
+        }
 
-    // Simulasi loading data
-    setLoading(true);
-    setTimeout(() => {
-      // Filter warkop yang ada di favorites
-      const filteredWarkops = warkopList.filter((warkop) =>
-        favorites.includes(warkop.id)
-      );
-      setFavoriteWarkops(filteredWarkops);
-      setLoading(false);
-    }, 800);
+        const json = await res.json();
+        const allWarkops: Warkop[] = json.data?.warkops || [];
+        const filteredWarkops = allWarkops.filter((warkop) => {
+          const docId = (warkop as any)._id ?? (warkop as any).id ?? (warkop as any).idStr ?? "";
+          return favorites.includes(docId);
+        });
+        setFavoriteWarkops(filteredWarkops);
+      } catch (err) {
+        console.error("Error fetching favorite warkops:", err);
+        setFavoriteWarkops([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavorites();
   }, [favorites, user]);
 
   // Filter dan sort warkops
@@ -93,13 +109,13 @@ export default function FavoritesPage() {
   // Redirect to login if not authenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8 bg-amber-50/10 backdrop-blur-xl rounded-3xl border border-amber-200/20">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
           <div className="text-6xl mb-6">🔒</div>
-          <h1 className="text-2xl font-bold text-amber-50 mb-4">
+          <h1 className="text-2xl font-bold text-white mb-4">
             Login Diperlukan
           </h1>
-          <p className="text-amber-200/80 mb-6">
+          <p className="text-zinc-400 mb-6">
             Silakan login terlebih dahulu untuk melihat daftar warkop favorit
             Anda.
           </p>
@@ -115,10 +131,10 @@ export default function FavoritesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-400 mx-auto"></div>
-          <p className="mt-4 text-amber-200 text-lg">Memuat favorit Anda...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto"></div>
+          <p className="mt-4 text-zinc-400 text-lg">Memuat favorit Anda...</p>
         </div>
       </div>
     );
@@ -127,14 +143,14 @@ export default function FavoritesPage() {
   // Empty state
   if (favoriteWarkops.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 py-12">
+      <div className="min-h-screen bg-[#0a0a0b] py-12">
         <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center bg-amber-50/10 backdrop-blur-xl rounded-3xl border border-amber-200/20 p-12">
+          <div className="text-center bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-12">
             <div className="text-8xl mb-6">💔</div>
-            <h1 className="text-3xl font-bold text-amber-50 mb-4">
+            <h1 className="text-3xl font-bold text-white mb-4">
               Belum Ada Favorit
             </h1>
-            <p className="text-amber-200/80 mb-8 max-w-md mx-auto">
+            <p className="text-zinc-400 mb-8 max-w-md mx-auto">
               Anda belum menambahkan warkop ke favorit. Jelajahi warkop-warkop
               terbaik dan simpan yang Anda suka!
             </p>
@@ -150,17 +166,17 @@ export default function FavoritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900 py-12">
+    <div className="min-h-screen bg-[#0a0a0b] py-12">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-4xl font-bold text-amber-50 flex items-center gap-3 mb-2">
+              <h1 className="text-4xl font-bold text-white flex items-center gap-3 mb-2">
                 <span>💖</span>
                 <span>Favorit Saya</span>
               </h1>
-              <p className="text-amber-200/80">
+              <p className="text-zinc-400">
                 {favoriteWarkops.length} warkop tersimpan dalam favorit
               </p>
             </div>
@@ -169,7 +185,7 @@ export default function FavoritesPage() {
               <Button
                 onClick={handleClearAllFavorites}
                 variant="outline"
-                className="text-red-300 border-red-300/50 hover:bg-red-500/20"
+                className="text-red-400 border-red-500/30 hover:bg-red-500/10"
               >
                 Hapus Semua
               </Button>
@@ -185,7 +201,7 @@ export default function FavoritesPage() {
                 placeholder="Cari warkop..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-amber-50/10 border border-amber-200/20 text-amber-50 placeholder-amber-200/50 focus:outline-none focus:ring-2 focus:ring-amber-500/50 backdrop-blur-xl"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
               />
             </div>
 
@@ -194,11 +210,11 @@ export default function FavoritesPage() {
               <select
                 value={filterBy}
                 onChange={(e) => setFilterBy(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-amber-50/10 border border-amber-200/20 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500/50 backdrop-blur-xl"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
               >
-                <option value="all">Semua Kategori</option>
+                <option value="all" className="bg-[#121215] text-white">Semua Kategori</option>
                 {getUniqueCategories().map((category) => (
-                  <option key={category} value={category}>
+                  <option key={category} value={category} className="bg-[#121215] text-white">
                     {category}
                   </option>
                 ))}
@@ -212,11 +228,11 @@ export default function FavoritesPage() {
                 onChange={(e) =>
                   setSortBy(e.target.value as "name" | "rating" | "distance")
                 }
-                className="w-full px-4 py-3 rounded-xl bg-amber-50/10 border border-amber-200/20 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500/50 backdrop-blur-xl"
+                className="w-full px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
               >
-                <option value="name">Urutkan: Nama</option>
-                <option value="rating">Urutkan: Rating</option>
-                <option value="distance">Urutkan: Jarak</option>
+                <option value="name" className="bg-[#121215] text-white">Urutkan: Nama</option>
+                <option value="rating" className="bg-[#121215] text-white">Urutkan: Rating</option>
+                <option value="distance" className="bg-[#121215] text-white">Urutkan: Jarak</option>
               </select>
             </div>
           </div>
@@ -224,7 +240,7 @@ export default function FavoritesPage() {
           {/* Search Results Info */}
           {searchQuery && (
             <div className="mb-6">
-              <p className="text-amber-200/80">
+              <p className="text-zinc-400">
                 Menampilkan {filteredAndSortedWarkops.length} hasil untuk &quot;
                 {searchQuery}&quot;
               </p>
@@ -234,12 +250,12 @@ export default function FavoritesPage() {
 
         {/* Warkop Grid */}
         {filteredAndSortedWarkops.length === 0 ? (
-          <div className="bg-amber-50/10 backdrop-blur-xl rounded-3xl border border-amber-200/20 p-12 text-center">
+          <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-12 text-center">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-bold text-amber-50 mb-2">
+            <h3 className="text-xl font-bold text-white mb-2">
               Tidak Ditemukan
             </h3>
-            <p className="text-amber-200/80">
+            <p className="text-zinc-400">
               Tidak ada warkop favorit yang sesuai dengan pencarian atau filter
               Anda.
             </p>

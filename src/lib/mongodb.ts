@@ -34,7 +34,7 @@ if (!cached) {
   };
 }
 
-async function dbConnect() {
+async function dbConnect(retries = 3, delay = 2000) {
   // Throw error only at runtime when actually trying to connect
   if (!MONGODB_URI) {
     throw new Error(
@@ -49,14 +49,58 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+      socketTimeoutMS: 45000, // 45 seconds
+      maxPoolSize: 10,
+      minPoolSize: 2,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = (async () => {
+      let lastError;
+      
+      for (let i = 0; i < retries; i++) {
+        try {
+          console.log(`Attempting MongoDB connection (${i + 1}/${retries})...`);
+          const connection = await mongoose.connect(MONGODB_URI!, opts);
+          console.log("✅ MongoDB connected successfully");
+          return connection;
+        } catch (error) {
+          lastError = error;
+          console.error(`❌ MongoDB connection attempt ${i + 1} failed:`, error instanceof Error ? error.message : error);
+          
+          // Don't retry on authentication errors or invalid URI
+          if (error instanceof Error && (
+            error.message.includes("authentication") ||
+            error.message.includes("Invalid connection string")
+          )) {
+            throw error;
+          }
+          
+          // Wait before retry (except on last attempt)
+          if (i < retries - 1) {
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
+        }
+      }
+      
+      // All retries failed
+      throw new Error(
+        `Failed to connect to MongoDB after ${retries} attempts. ` +
+        `Last error: ${lastError instanceof Error ? lastError.message : 'Unknown error'}. ` +
+        `Please check: 1) MongoDB Atlas IP whitelist, 2) Connection string, 3) Network connectivity`
+      );
+    })();
   }
-  cached.conn = await cached.promise;
-  return cached.conn;
+  
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (error) {
+    // Reset promise so next call will retry
+    cached.promise = null;
+    throw error;
+  }
 }
 
 export default dbConnect;

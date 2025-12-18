@@ -79,8 +79,8 @@ const ProfilePage: React.FC = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-950 to-amber-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-400"></div>
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
       </div>
     );
   }
@@ -90,21 +90,21 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-950 to-amber-900 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-amber-50 mb-2">Profil Saya</h1>
-          <p className="text-amber-200">
+          <h1 className="text-3xl font-bold text-white mb-2">Profil Saya</h1>
+          <p className="text-zinc-400">
             Kelola informasi profil Anda untuk mengontrol, melindungi, dan
             mengamankan akun
           </p>
         </div>
 
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/10">
           {/* Profile Header */}
-          <div className="bg-gradient-to-r from-amber-500 to-amber-600 p-8">
+          <div className="bg-gradient-to-r from-violet-500/20 to-purple-500/20 p-8 border-b border-white/5">
             <div className="flex items-center gap-6">
               {user.profileImage || user.avatar ? (
                 <Image
@@ -112,11 +112,11 @@ const ProfilePage: React.FC = () => {
                   alt={user.name}
                   width={100}
                   height={100}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                  className="w-24 h-24 rounded-full object-cover ring-4 ring-violet-500/50 shadow-lg shadow-violet-500/20"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center border-4 border-white shadow-lg">
-                  <span className="text-amber-600 text-3xl font-bold">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center ring-4 ring-violet-500/50 shadow-lg shadow-violet-500/20">
+                  <span className="text-white text-3xl font-bold">
                     {getInitials(user.name)}
                   </span>
                 </div>
@@ -125,13 +125,13 @@ const ProfilePage: React.FC = () => {
                 <h2 className="text-2xl font-bold text-white mb-1">
                   {user.name}
                 </h2>
-                <p className="text-amber-100 mb-2">{user.email}</p>
+                <p className="text-zinc-400 mb-2">{user.email}</p>
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium capitalize">
+                  <span className="px-3 py-1 bg-violet-500/20 backdrop-blur-sm rounded-full text-violet-400 text-sm font-medium capitalize border border-violet-500/20">
                     {user.role || "customer"}
                   </span>
                   {user.isVerified && (
-                    <span className="px-3 py-1 bg-green-500/80 backdrop-blur-sm rounded-full text-white text-sm font-medium flex items-center gap-1">
+                    <span className="px-3 py-1 bg-emerald-500/20 backdrop-blur-sm rounded-full text-emerald-400 text-sm font-medium flex items-center gap-1 border border-emerald-500/20">
                       <svg
                         className="w-4 h-4"
                         fill="currentColor"
@@ -166,7 +166,7 @@ const ProfilePage: React.FC = () => {
             {isEditing ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-zinc-300 mb-2">
                     Nama Lengkap
                   </label>
                   <Input
@@ -176,11 +176,12 @@ const ProfilePage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     placeholder="Masukkan nama lengkap"
+                    variant="dark"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-zinc-300 mb-2">
                     Email
                   </label>
                   <Input
@@ -191,15 +192,16 @@ const ProfilePage: React.FC = () => {
                     required
                     placeholder="Masukkan email"
                     disabled
-                    className="bg-gray-50 cursor-not-allowed"
+                    variant="dark"
+                    className="bg-white/5 cursor-not-allowed opacity-60"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-zinc-500 mt-1">
                     Email tidak dapat diubah
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-zinc-300 mb-2">
                     Nomor Telepon
                   </label>
                   <Input
@@ -208,6 +210,7 @@ const ProfilePage: React.FC = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     placeholder="Contoh: 08123456789"
+                    variant="dark"
                   />
                 </div>
 
@@ -237,47 +240,47 @@ const ProfilePage: React.FC = () => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                    <label className="block text-sm font-medium text-zinc-500 mb-1">
                       Nama Lengkap
                     </label>
-                    <p className="text-lg text-gray-900">{user.name}</p>
+                    <p className="text-lg text-white">{user.name}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                    <label className="block text-sm font-medium text-zinc-500 mb-1">
                       Email
                     </label>
-                    <p className="text-lg text-gray-900">{user.email}</p>
+                    <p className="text-lg text-white">{user.email}</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                    <label className="block text-sm font-medium text-zinc-500 mb-1">
                       Nomor Telepon
                     </label>
-                    <p className="text-lg text-gray-900">
+                    <p className="text-lg text-white">
                       {user.phone || "Belum diatur"}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                    <label className="block text-sm font-medium text-zinc-500 mb-1">
                       Role
                     </label>
-                    <p className="text-lg text-gray-900 capitalize">
+                    <p className="text-lg text-white capitalize">
                       {user.role || "customer"}
                     </p>
                   </div>
                 </div>
 
                 {/* Additional Info */}
-                <div className="pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <div className="pt-6 border-t border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-4">
                     Informasi Tambahan
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 p-4 bg-amber-50 rounded-lg">
+                    <div className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
                       <svg
-                        className="w-6 h-6 text-amber-600"
+                        className="w-6 h-6 text-violet-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -290,16 +293,16 @@ const ProfilePage: React.FC = () => {
                         />
                       </svg>
                       <div>
-                        <p className="text-sm text-gray-600">Warkop Favorit</p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="text-sm text-zinc-400">Warkop Favorit</p>
+                        <p className="font-semibold text-white">
                           {user.favoriteWarkops?.length || 0} Warkop
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-3 p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
                       <svg
-                        className="w-6 h-6 text-blue-600"
+                        className="w-6 h-6 text-emerald-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -312,8 +315,8 @@ const ProfilePage: React.FC = () => {
                         />
                       </svg>
                       <div>
-                        <p className="text-sm text-gray-600">Status Akun</p>
-                        <p className="font-semibold text-gray-900">
+                        <p className="text-sm text-zinc-400">Status Akun</p>
+                        <p className="font-semibold text-white">
                           {user.isVerified
                             ? "Terverifikasi"
                             : "Belum Terverifikasi"}
@@ -324,8 +327,8 @@ const ProfilePage: React.FC = () => {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="pt-6 border-t border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <div className="pt-6 border-t border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-4">
                     Aksi Cepat
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

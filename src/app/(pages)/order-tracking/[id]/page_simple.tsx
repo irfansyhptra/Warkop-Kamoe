@@ -21,7 +21,7 @@ const mockOrder: Order = {
         price: 12000,
         description: "Kopi hitam robusta pilihan dari Lampung",
         category: "Kopi",
-        image: "/images/kopi-hitam.jpg",
+        image: "/images/kopi-aceh.jpg",
         availability: "available",
         isRecommended: true,
       },
@@ -38,7 +38,7 @@ const mockOrder: Order = {
         price: 22000,
         description: "Nasi goreng khas warung dengan bumbu rempah pilihan",
         category: "Makanan Berat",
-        image: "/images/nasgor.jpg",
+        image: "/images/nasi-goreng.jpg",
         availability: "available",
         isRecommended: true,
       },
@@ -189,7 +189,7 @@ export default function OrderTrackingPage() {
                     <div className="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={
-                          item.menuItem.image || "/images/placeholder-food.jpg"
+                          item.menuItem.image || "/images/cappuccino.jpg"
                         }
                         alt={item.menuItem.name}
                         width={64}
@@ -197,7 +197,7 @@ export default function OrderTrackingPage() {
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
-                            "/images/placeholder-food.jpg";
+                            "/images/cappuccino.jpg";
                         }}
                       />
                     </div>

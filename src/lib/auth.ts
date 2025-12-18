@@ -9,6 +9,7 @@ export interface JWTPayload {
   userId: string;
   email: string;
   role: "customer" | "warkop_owner" | "admin";
+  warkopId?: string;
 }
 
 export const hashPassword = async (password: string): Promise<string> => {

@@ -17,36 +17,37 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       rightIcon,
       className = "",
       type = "text",
-      variant = "dark",
+      variant = "light",
       ...props
     },
     ref
   ) => {
     const darkClasses = `
     w-full px-4 py-3 
-    bg-white/10 backdrop-blur-xl 
-    border border-amber-200/30 
-    rounded-2xl 
-    text-amber-50 placeholder-amber-200/60
-    focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400/50
+    bg-white/5 
+    border border-white/10 
+    rounded-xl 
+    text-white placeholder-zinc-500
+    focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50
+    hover:border-white/20 hover:bg-white/[0.07]
     transition-all duration-200
     ${leftIcon ? "pl-12" : ""}
     ${rightIcon ? "pr-12" : ""}
-    ${error ? "border-red-400/50 focus:ring-red-400/50" : ""}
+    ${error ? "border-red-500/50 focus:ring-red-500/50" : ""}
   `;
 
     const lightClasses = `
     w-full px-4 py-3 
-    bg-gray-50 
-    border-2 border-gray-400 
-    rounded-lg 
-    text-gray-900 placeholder-gray-500 font-medium
-    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:bg-white
-    hover:border-gray-500
+    bg-white/5 
+    border border-white/10 
+    rounded-xl 
+    text-white placeholder-zinc-500
+    focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50
+    hover:border-white/20 hover:bg-white/[0.07]
     transition-all duration-200
     ${leftIcon ? "pl-12" : ""}
     ${rightIcon ? "pr-12" : ""}
-    ${error ? "border-red-500 focus:ring-red-500" : ""}
+    ${error ? "border-red-500/50 focus:ring-red-500/50" : ""}
   `;
 
     const inputClasses = variant === "dark" ? darkClasses : lightClasses;
@@ -56,7 +57,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={`block text-sm font-semibold ${
-              variant === "dark" ? "text-amber-100" : "text-gray-800"
+              variant === "dark" ? "text-zinc-300" : "text-zinc-300"
             }`}
           >
             {label}
@@ -66,7 +67,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {leftIcon && (
             <div
               className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${
-                variant === "dark" ? "text-amber-200/60" : "text-gray-500"
+                variant === "dark" ? "text-zinc-500" : "text-zinc-500"
               }`}
             >
               {leftIcon}
@@ -81,14 +82,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           {rightIcon && (
             <div
               className={`absolute right-4 top-1/2 transform -translate-y-1/2 ${
-                variant === "dark" ? "text-amber-200/60" : "text-gray-500"
+                variant === "dark" ? "text-zinc-500" : "text-zinc-500"
               }`}
             >
               {rightIcon}
             </div>
           )}
         </div>
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {error && <p className="text-sm text-red-400">{error}</p>}
       </div>
     );
   }

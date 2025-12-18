@@ -32,6 +32,11 @@ const WarkopOwnerMenuManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
+  // Image upload states
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
   const [formData, setFormData] = useState<MenuItemForm>({
     name: "",
     description: "",
@@ -45,25 +50,38 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
   // Check authentication and role
   useEffect(() => {
-    if (!authLoading && (!isAuthenticated || user?.role !== "warkop_owner")) {
-      router.push("/auth?tab=login");
-    }
-  }, [isAuthenticated, authLoading, user, router]);
-
-  // Fetch menu items
-  useEffect(() => {
-    if (user && user.warkopId) {
-      fetchMenuItems();
+    if (!authLoading) {
+      if (!isAuthenticated || user?.role !== "warkop_owner") {
+        router.push("/mywarkop");
+        return;
+      }
+      
+      // If authenticated as warkop owner but no warkopId, redirect to setup
+      if (user && user.role === "warkop_owner" && !user.warkopId) {
+        router.push("/warkop-owner/setup");
+        return;
+      }
+      
+      // If everything is ok, fetch menu items
+      if (user && user.warkopId) {
+        fetchMenuItems();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [isAuthenticated, authLoading, user, router]);
 
   const fetchMenuItems = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("warkop-kamoe-token");
 
-      const response = await fetch(`/api/menu?warkopId=${user?.warkopId}`, {
+      if (!user?.warkopId) {
+        console.warn("No warkopId found");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/menu?warkopId=${user.warkopId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -71,11 +89,17 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        // Ensure data.data is an array before setting
-        const menuData = Array.isArray(data.data) ? data.data : [];
-        setMenuItems(menuData);
+        // API returns { success: true, data: { menuItems: [...] } }
+        const menuData = Array.isArray(data.data?.menuItems) ? data.data.menuItems : [];
+        // Map _id to id for consistency
+        const mappedMenu = menuData.map((item: MenuItem & { _id?: string }) => ({
+          ...item,
+          id: item._id || item.id,
+        }));
+        setMenuItems(mappedMenu);
       } else {
         // If response not ok, set empty array
+        console.warn("Failed to fetch menu items:", response.status);
         setMenuItems([]);
       }
     } catch (error) {
@@ -107,12 +131,155 @@ const WarkopOwnerMenuManagement: React.FC = () => {
     });
   };
 
+  // Handle image file selection with compression
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Mohon pilih file gambar yang valid");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Ukuran file maksimal 5MB");
+      return;
+    }
+
+    try {
+      // Compress image if it's too large
+      let processedFile = file;
+      if (file.size > 1 * 1024 * 1024) {
+        // Compress if larger than 1MB
+        processedFile = await compressImage(file);
+      }
+
+      // Set selected file and create preview
+      setSelectedImageFile(processedFile);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(processedFile);
+    } catch (error) {
+      console.error("Error processing image:", error);
+      alert("Gagal memproses gambar. Silakan coba lagi.");
+    }
+  };
+
+  // Compress image client-side
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = document.createElement("img");
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Resize if too large (max 1200px)
+          const maxSize = 1200;
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error("Failed to compress image"));
+              }
+            },
+            "image/jpeg",
+            0.8 // Quality 80%
+          );
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  // Clear selected image
+  const handleClearImage = () => {
+    setSelectedImageFile(null);
+    setImagePreview(null);
+    setFormData({ ...formData, image: undefined });
+  };
+
+  // Upload image to Cloudinary
+  const uploadImageToCloudinary = async (): Promise<string | null> => {
+    if (!selectedImageFile) return null;
+
+    try {
+      setIsUploadingImage(true);
+      const token = localStorage.getItem("warkop-kamoe-token");
+
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", selectedImageFile);
+      formDataUpload.append("folder", "menu-items");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataUpload,
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal upload gambar");
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error("Upload image error:", error);
+      throw error;
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
       const token = localStorage.getItem("warkop-kamoe-token");
+      
+      // Upload image first if there's a new image selected
+      let imageUrl = formData.image;
+      if (selectedImageFile) {
+        const uploadedUrl = await uploadImageToCloudinary();
+        if (!uploadedUrl) {
+          alert("Gagal upload gambar. Silakan coba lagi.");
+          setIsSaving(false);
+          return;
+        }
+        imageUrl = uploadedUrl;
+      }
+
       const url = editingItem ? `/api/menu/${editingItem.id}` : "/api/menu";
       const method = editingItem ? "PUT" : "POST";
 
@@ -124,6 +291,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
         },
         body: JSON.stringify({
           ...formData,
+          image: imageUrl,
           warkopId: user?.warkopId,
         }),
       });
@@ -161,6 +329,10 @@ const WarkopOwnerMenuManagement: React.FC = () => {
       spicyLevel: item.spicyLevel || 0,
       isRecommended: item.isRecommended || false,
     });
+    // Set existing image as preview
+    if (item.image) {
+      setImagePreview(item.image);
+    }
     setIsModalOpen(true);
   };
 
@@ -203,6 +375,9 @@ const WarkopOwnerMenuManagement: React.FC = () => {
     });
     setEditingItem(null);
     setIsModalOpen(false);
+    // Clear image states
+    setSelectedImageFile(null);
+    setImagePreview(null);
   };
 
   const categories = [
@@ -233,8 +408,11 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-950 to-amber-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-400"></div>
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Memuat data menu...</p>
+        </div>
       </div>
     );
   }
@@ -243,17 +421,56 @@ const WarkopOwnerMenuManagement: React.FC = () => {
     return null;
   }
 
+  // If user doesn't have warkopId, show setup message
+  if (!user.warkopId) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center max-w-md px-4">
+          <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-2xl">
+            <svg
+              className="w-16 h-16 text-violet-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Setup Warkop Diperlukan
+            </h2>
+            <p className="text-zinc-400 mb-6">
+              Anda perlu melengkapi setup warkop terlebih dahulu sebelum bisa
+              mengelola menu.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => router.push("/warkop-owner/setup")}
+            >
+              Setup Warkop Sekarang
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-950 to-amber-900 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-amber-50 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 Kelola Menu
               </h1>
-              <p className="text-amber-200">
+              <p className="text-zinc-400">
                 Tambah, edit, atau hapus menu item warkop Anda
               </p>
             </div>
@@ -286,11 +503,11 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-amber-400/20">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-violet-500/20 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-amber-400"
+                  className="w-6 h-6 text-violet-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -304,19 +521,19 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-amber-200 text-sm">Total Menu</p>
-                <p className="text-2xl font-bold text-amber-50">
+                <p className="text-zinc-400 text-sm">Total Menu</p>
+                <p className="text-2xl font-bold text-white">
                   {menuItemsArray.length}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-green-400/20">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-emerald-500/20">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center">
                 <svg
-                  className="w-6 h-6 text-green-400"
+                  className="w-6 h-6 text-emerald-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -330,8 +547,8 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-amber-200 text-sm">Tersedia</p>
-                <p className="text-2xl font-bold text-amber-50">
+                <p className="text-zinc-400 text-sm">Tersedia</p>
+                <p className="text-2xl font-bold text-white">
                   {
                     menuItemsArray.filter((m) => m.availability === "available")
                       .length
@@ -341,7 +558,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-orange-400/30">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-orange-500/20">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
                 <svg
@@ -359,8 +576,8 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-amber-200 text-sm">Terbatas</p>
-                <p className="text-2xl font-bold text-amber-50">
+                <p className="text-zinc-400 text-sm">Terbatas</p>
+                <p className="text-2xl font-bold text-white">
                   {
                     menuItemsArray.filter((m) => m.availability === "limited")
                       .length
@@ -370,7 +587,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-red-400/20">
+          <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-red-500/20">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center">
                 <svg
@@ -388,8 +605,8 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-amber-200 text-sm">Tidak Tersedia</p>
-                <p className="text-2xl font-bold text-amber-50">
+                <p className="text-zinc-400 text-sm">Tidak Tersedia</p>
+                <p className="text-2xl font-bold text-white">
                   {
                     menuItemsArray.filter(
                       (m) => m.availability === "unavailable"
@@ -402,10 +619,10 @@ const WarkopOwnerMenuManagement: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-gray-100">
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 mb-6 border border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Cari Menu
               </label>
               <div className="relative">
@@ -414,10 +631,10 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   placeholder="Cari nama atau deskripsi menu..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-300 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  className="w-full px-4 py-3 pr-10 bg-white/5 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                 />
                 <svg
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -788,18 +1005,73 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL Gambar
+                Gambar Menu
               </label>
-              <Input
-                type="url"
-                name="image"
-                value={formData.image}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-                variant="light"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Opsional: Masukkan URL gambar dari Cloudinary atau sumber lain
+              
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mb-4 relative">
+                  <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleClearImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors shadow-lg"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+
+              {/* Upload Button */}
+              <div className="flex gap-2">
+                <label className="flex-1">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-all">
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <span className="text-sm text-gray-600">
+                      {selectedImageFile ? selectedImageFile.name : "Pilih Gambar"}
+                    </span>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageSelect}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Format: JPG, PNG, GIF (Max 5MB). Gambar akan otomatis di-upload saat menyimpan menu.
               </p>
             </div>
 
@@ -808,10 +1080,12 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={isSaving}
+                disabled={isSaving || isUploadingImage}
                 className="flex-1"
               >
-                {isSaving
+                {isUploadingImage
+                  ? "Upload gambar..."
+                  : isSaving
                   ? "Menyimpan..."
                   : editingItem
                   ? "Update Menu"

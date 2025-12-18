@@ -145,10 +145,11 @@ export const useAuth = () => {
 
   const register = useCallback(
     async (
+      name: string,
       email: string,
       password: string,
-      name: string,
-      phone?: string
+      phone?: string,
+      role: "customer" | "warkop_owner" = "customer"
     ): Promise<boolean> => {
       try {
         const response = await fetch(`${API_URL}/api/auth/register`, {
@@ -161,7 +162,7 @@ export const useAuth = () => {
             email,
             password,
             phone,
-            role: "customer",
+            role,
           }),
         });
 

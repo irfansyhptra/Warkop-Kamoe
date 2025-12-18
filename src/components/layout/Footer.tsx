@@ -27,48 +27,53 @@ const Footer: React.FC = () => {
   );
 
   return (
-    <footer className="border-t border-amber-200/20 bg-gradient-to-r from-amber-900/60 to-amber-800/50 backdrop-blur-2xl">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="border-t border-white/5 bg-[#0a0a0b] relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-t from-violet-500/5 via-transparent to-transparent"></div>
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+      
+      <div className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
                 <span className="text-white font-bold text-xl">☕</span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-amber-50">
+                <h2 className="text-xl font-bold text-white">
                   Warkop Kamoe
                 </h2>
-                <p className="text-xs text-amber-200/80">Marketplace</p>
+                <p className="text-xs text-zinc-500">Marketplace</p>
               </div>
             </div>
-            <p className="text-amber-200/80 text-sm">
+            <p className="text-zinc-400 text-sm">
               Platform marketplace warkop terpercaya di Banda Aceh dengan
               pengalaman belanja yang modern dan nyaman.
             </p>
             <div className="flex gap-4">
               <a
                 href="#"
-                className="p-2 rounded-full bg-amber-400/10 text-amber-200 hover:text-amber-100 hover:bg-amber-400/20 transition-colors"
+                className="p-2 rounded-full bg-white/5 text-zinc-400 hover:text-violet-400 hover:bg-violet-500/10 hover:shadow-lg hover:shadow-violet-500/20 transition-all duration-300"
               >
                 <InstagramIcon />
               </a>
               <a
                 href="#"
-                className="p-2 rounded-full bg-amber-400/10 text-amber-200 hover:text-amber-100 hover:bg-amber-400/20 transition-colors"
+                className="p-2 rounded-full bg-white/5 text-zinc-400 hover:text-blue-400 hover:bg-blue-500/10 hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300"
               >
                 <FacebookIcon />
               </a>
               <a
                 href="#"
-                className="p-2 rounded-full bg-amber-400/10 text-amber-200 hover:text-amber-100 hover:bg-amber-400/20 transition-colors"
+                className="p-2 rounded-full bg-white/5 text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 hover:shadow-lg hover:shadow-cyan-500/20 transition-all duration-300"
               >
                 <TwitterIcon />
               </a>
               <a
                 href="#"
-                className="p-2 rounded-full bg-amber-400/10 text-amber-200 hover:text-amber-100 hover:bg-amber-400/20 transition-colors"
+                className="p-2 rounded-full bg-white/5 text-zinc-400 hover:text-emerald-400 hover:bg-emerald-500/10 hover:shadow-lg hover:shadow-emerald-500/20 transition-all duration-300"
               >
                 <WhatsappIcon />
               </a>
@@ -77,29 +82,29 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-amber-50">Quick Links</h3>
+            <h3 className="text-lg font-semibold text-white">Quick Links</h3>
             <nav className="space-y-2">
               <Link
                 href="/"
-                className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
+                className="block text-zinc-400 hover:text-violet-400 transition-colors text-sm"
               >
                 Home
               </Link>
               <Link
                 href="/favorites"
-                className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
+                className="block text-zinc-400 hover:text-violet-400 transition-colors text-sm"
               >
                 Favorites
               </Link>
               <Link
                 href="/cart"
-                className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
+                className="block text-zinc-400 hover:text-violet-400 transition-colors text-sm"
               >
                 Keranjang
               </Link>
               <Link
                 href="/(pages)/order-tracking"
-                className="block text-amber-200/80 hover:text-amber-100 transition-colors text-sm"
+                className="block text-zinc-400 hover:text-violet-400 transition-colors text-sm"
               >
                 Order Tracking
               </Link>
@@ -108,21 +113,21 @@ const Footer: React.FC = () => {
 
           {/* Customer Service */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-amber-50">
+            <h3 className="text-lg font-semibold text-white">
               Customer Service
             </h3>
             <div className="space-y-2 text-sm">
-              <p className="text-amber-200/80">
-                <span className="font-medium">Phone:</span> +62 651-1234567
+              <p className="text-zinc-400">
+                <span className="font-medium text-zinc-300">Phone:</span> +62 651-1234567
               </p>
-              <p className="text-amber-200/80">
-                <span className="font-medium">WhatsApp:</span> +62 812-3456-7890
+              <p className="text-zinc-400">
+                <span className="font-medium text-zinc-300">WhatsApp:</span> +62 812-3456-7890
               </p>
-              <p className="text-amber-200/80">
-                <span className="font-medium">Email:</span> info@warkopkamoe.com
+              <p className="text-zinc-400">
+                <span className="font-medium text-zinc-300">Email:</span> info@warkopkamoe.com
               </p>
-              <p className="text-amber-200/80">
-                <span className="font-medium">Jam Layanan:</span> 08:00 - 22:00
+              <p className="text-zinc-400">
+                <span className="font-medium text-zinc-300">Jam Layanan:</span> 08:00 - 22:00
                 WIB
               </p>
             </div>
@@ -130,19 +135,19 @@ const Footer: React.FC = () => {
 
           {/* Location */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-amber-50">Lokasi</h3>
-            <div className="text-sm text-amber-200/80">
+            <h3 className="text-lg font-semibold text-white">Lokasi</h3>
+            <div className="text-sm text-zinc-400">
               <p>Jl. Sultan Iskandar Muda</p>
               <p>Banda Aceh, Aceh 23116</p>
               <p>Indonesia</p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium text-amber-100">Area Layanan:</h4>
+              <h4 className="font-medium text-zinc-300">Area Layanan:</h4>
               <div className="flex flex-wrap gap-2">
-                <span className="px-2 py-1 rounded-lg bg-amber-400/20 text-amber-100 text-xs border border-amber-300/30">
+                <span className="px-2 py-1 rounded-lg bg-violet-500/10 text-violet-400 text-xs border border-violet-500/20">
                   Banda Aceh
                 </span>
-                <span className="px-2 py-1 rounded-lg bg-amber-400/20 text-amber-100 text-xs border border-amber-300/30">
+                <span className="px-2 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs border border-cyan-500/20">
                   Aceh Besar
                 </span>
               </div>
@@ -151,26 +156,26 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-amber-200/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-amber-200/60 text-sm">
+        <div className="border-t border-white/5 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-zinc-500 text-sm">
             © 2024 Warkop Kamoe Marketplace. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a
               href="#"
-              className="text-amber-200/80 hover:text-amber-100 transition-colors"
+              className="text-zinc-400 hover:text-violet-400 transition-colors"
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-amber-200/80 hover:text-amber-100 transition-colors"
+              className="text-zinc-400 hover:text-violet-400 transition-colors"
             >
               Terms of Service
             </a>
             <a
               href="#"
-              className="text-amber-200/80 hover:text-amber-100 transition-colors"
+              className="text-zinc-400 hover:text-violet-400 transition-colors"
             >
               Help Center
             </a>

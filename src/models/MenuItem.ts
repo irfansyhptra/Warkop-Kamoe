@@ -8,12 +8,14 @@ export interface IMenuItem {
   price: number;
   category: string;
   image?: string;
-  availability: "available" | "unavailable" | "out_of_stock";
+  availability: "available" | "unavailable" | "limited";
+  isAvailable?: boolean;
   isRecommended: boolean;
   ingredients?: string[];
+  spicyLevel?: number;
   protein?: number;
   calories?: number;
-  preparationTime?: number;
+  preparationTime?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -47,8 +49,12 @@ const MenuItemSchema = new Schema<IMenuItem>(
     },
     availability: {
       type: String,
-      enum: ["available", "unavailable", "out_of_stock"],
+      enum: ["available", "unavailable", "limited"],
       default: "available",
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
     isRecommended: {
       type: Boolean,
@@ -59,9 +65,15 @@ const MenuItemSchema = new Schema<IMenuItem>(
         type: String,
       },
     ],
+    spicyLevel: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
     protein: Number,
     calories: Number,
-    preparationTime: Number,
+    preparationTime: String,
   },
   {
     timestamps: true,

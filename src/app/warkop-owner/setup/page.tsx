@@ -84,17 +84,94 @@ export default function WarkopSetupPage() {
     setLoading(true);
 
     try {
-      // Simulasi API call untuk registrasi warkop
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const token = localStorage.getItem("warkop-kamoe-token");
+
+      if (!token || !user) {
+        showError("Error", "Silakan login terlebih dahulu");
+        router.push("/mywarkop");
+        return;
+      }
+
+      // Create warkop via API
+      const response = await fetch("/api/warkops", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          ownerId: user.id,
+          address: formData.location,
+          city: formData.location.split(",").pop()?.trim() || "Unknown",
+          phone: formData.contactInfo.phone,
+          openingHours: formData.openingHours.is24Hours
+            ? ["24 Hours"]
+            : [
+                `${formData.openingHours.open} - ${formData.openingHours.close}`,
+              ],
+          facilities: formData.facilities,
+          latitude: formData.coordinates.lat || -6.2,
+          longitude: formData.coordinates.lng || 106.8,
+          images: formData.images || [],
+          categories: ["Kopi", "Makanan"],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Warkop creation failed:", errorData);
+        throw new Error(errorData.error || "Gagal mendaftarkan warkop");
+      }
+
+      const result = await response.json();
+      
+      if (!result.success || !result.data || !result.data.warkop) {
+        console.error("Invalid response format:", result);
+        throw new Error("Response tidak valid dari server");
+      }
+
+      const warkopId = result.data.warkop._id;
+
+      // Update user's warkopId
+      const updateResponse = await fetch("/api/auth/update-profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ warkopId }),
+      });
+
+      if (!updateResponse.ok) {
+        console.warn("Failed to update user warkopId, but warkop was created");
+        // Still continue, user can manually link later
+      } else {
+        // Update local user object
+        const userData = await updateResponse.json();
+        if (userData.success && userData.data) {
+          localStorage.setItem("warkop-kamoe-user", JSON.stringify(userData.data));
+        }
+      }
 
       showSuccess(
         "Warkop Berhasil Didaftarkan",
         "Warkop Anda akan diverifikasi dalam 1-2 hari kerja"
       );
 
-      router.push("/warkop-owner/dashboard");
-    } catch {
-      showError("Error", "Terjadi kesalahan, silakan coba lagi");
+      // Small delay before redirect to ensure state is updated
+      setTimeout(() => {
+        router.push("/warkop-owner/dashboard");
+      }, 500);
+    } catch (error) {
+      console.error("Setup warkop error:", error);
+      showError(
+        "Gagal Setup Warkop",
+        error instanceof Error
+          ? error.message
+          : "Terjadi kesalahan, silakan coba lagi"
+      );
     } finally {
       setLoading(false);
     }

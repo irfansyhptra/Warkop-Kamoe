@@ -11,71 +11,23 @@ import { useNotification } from "@/hooks/useNotification";
 import { useAuth } from "@/hooks/useAuth";
 import Button from "@/components/ui/Button";
 
-// Enhanced Mock data untuk menu item detail
-const mockMenuItem: MenuItem = {
-  id: "menu-1",
-  name: "Kopi Hitam Special",
-  price: 12000,
-  description:
-    "Kopi hitam robusta pilihan dari Lampung dengan rasa yang kuat dan aroma yang harum. Diseduh dengan teknik pour over untuk cita rasa terbaik yang memanjakan lidah para pecinta kopi sejati.",
-  category: "Kopi",
-  image: "/images/kopi-hitam.jpg",
-  availability: "available",
-  isRecommended: true,
-  ingredients: [
-    "Biji Kopi Robusta Lampung Premium",
-    "Air Mineral Berkualitas Tinggi",
-  ],
-  nutrition: {
-    calories: 5,
-    caffeine: "95mg",
-    fat: "0g",
-    carbs: "1g",
-  },
-  spicyLevel: 0,
-  preparationTime: "3-5 menit",
-  allergens: [],
-  tags: ["Halal", "Vegan", "Organik", "Fair Trade"],
-};
-
-const mockWarkop: Warkop = {
-  id: "warkop-1",
-  name: "Kopi Kita",
-  description:
-    "Warkop legendaris dengan cita rasa kopi tradisional yang autentik",
-  location: "Jl. Sudirman No. 123, Jakarta Pusat",
-  coordinates: { lat: -6.2088, lng: 106.8456 },
-  rating: 4.5,
-  totalReviews: 150,
-  categories: ["Kopi", "Snack", "Makanan Berat"],
-  distance: "1.2 km",
-  badges: ["Populer", "Buka 24 Jam"],
-  busyLevel: "Ramai",
-  promo: "Diskon 20% untuk pembelian di atas 50rb",
-  images: ["/images/warkop-1.jpg"],
-  openingHours: { open: "06:00", close: "23:00", is24Hours: false },
-  contactInfo: { phone: "021-12345678", whatsapp: "08123456789" },
-  facilities: ["WiFi", "Parkir", "AC", "Musholla"],
-  menu: [],
-};
-
-// Mock reviews untuk menu item
+// Mock reviews untuk menu item (will be replaced with real data later)
 const mockMenuReviews = [
   {
     id: "review-1",
     userName: "Ahmad Rizky",
-    userAvatar: "/images/avatar-1.jpg",
+    userAvatar: "",
     rating: 5,
     comment:
       "Kopi hitamnya mantap banget! Rasa pahit yang pas, aromanya wangi. Recommended untuk yang suka kopi strong.",
     date: "2024-12-20",
     helpful: 8,
-    images: ["/images/review-kopi-1.jpg"],
+    images: [],
   },
   {
     id: "review-2",
     userName: "Siti Nurhaliza",
-    userAvatar: "/images/avatar-2.jpg",
+    userAvatar: "",
     rating: 4,
     comment:
       "Enak tapi agak terlalu strong buat saya. Mungkin next time minta yang lebih light.",
@@ -86,7 +38,7 @@ const mockMenuReviews = [
   {
     id: "review-3",
     userName: "Budi Santoso",
-    userAvatar: "/images/avatar-3.jpg",
+    userAvatar: "",
     rating: 5,
     comment:
       "Sudah langganan dari dulu. Konsisten rasanya, barista juga ramah. Tempatnya cozy buat kerja.",
@@ -113,13 +65,55 @@ export default function MenuDetailPage() {
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
 
   useEffect(() => {
-    // Simulasi loading data menu item
-    setLoading(true);
-    setTimeout(() => {
-      setMenuItem(mockMenuItem);
-      setWarkop(mockWarkop);
-      setLoading(false);
-    }, 1000);
+    const fetchMenuData = async () => {
+      try {
+        setLoading(true);
+        const menuId = params.id as string;
+        
+        // Fetch menu item detail
+        const menuRes = await fetch(`/api/menu/${menuId}`);
+        if (menuRes.ok) {
+          const menuJson = await menuRes.json();
+          const menuData = menuJson.data?.menuItem || null;
+          
+          if (menuData) {
+            setMenuItem({
+              ...menuData,
+              id: menuData._id || menuId,
+            });
+            
+            // Fetch warkop data if warkopId exists
+            if (menuData.warkopId) {
+              const warkopRes = await fetch(`/api/warkops/${menuData.warkopId}`);
+              if (warkopRes.ok) {
+                const warkopJson = await warkopRes.json();
+                const warkopData = warkopJson.data?.warkop;
+                if (warkopData) {
+                  setWarkop({
+                    ...warkopData,
+                    id: warkopData._id || menuData.warkopId,
+                  });
+                }
+              }
+            }
+          } else {
+            setMenuItem(null);
+          }
+        } else if (menuRes.status === 404) {
+          setMenuItem(null);
+        } else {
+          console.error("Failed to fetch menu item");
+          setMenuItem(null);
+        }
+      } catch (error) {
+        console.error("Error fetching menu data:", error);
+        setMenuItem(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenuData();
   }, [params.id]);
 
   const handleAddToCart = () => {
@@ -267,13 +261,13 @@ export default function MenuDetailPage() {
             {/* Main Image */}
             <div className="relative h-96 bg-gray-200 rounded-xl overflow-hidden">
               <Image
-                src={menuItem.image || "/images/placeholder-food.jpg"}
+                src={menuItem.image || "/images/cappuccino.jpg"}
                 alt={menuItem.name}
                 fill
                 className="object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
-                    "/images/placeholder-food.jpg";
+                    "/images/cappuccino.jpg";
                 }}
               />
 

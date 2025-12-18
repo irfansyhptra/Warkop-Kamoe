@@ -51,20 +51,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       items,
-      totalAmount,
+      totalAmount: providedTotal,
       deliveryInfo,
       paymentMethod,
       estimatedDeliveryTime,
+      subtotal: providedSubtotal,
+      deliveryFee: providedDeliveryFee,
+      serviceFee: providedServiceFee,
+      discount: providedDiscount,
+      warkopId: providedWarkopId,
+      warkopName: providedWarkopName,
     } = body;
 
     // Validation
-    if (
-      !items ||
-      items.length === 0 ||
-      !totalAmount ||
-      !deliveryInfo ||
-      !paymentMethod
-    ) {
+    if (!items || items.length === 0 || !deliveryInfo || !paymentMethod) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -74,15 +74,39 @@ export async function POST(request: NextRequest) {
     // Generate unique order ID
     const orderId = `ORDER-${Date.now()}`;
 
+    // Compute subtotal and fees if not provided
+    const computedSubtotal = providedSubtotal
+      ? Number(providedSubtotal)
+      : items.reduce((s: number, it: any) => s + (Number(it.price) || 0) * (Number(it.quantity) || 0), 0);
+
+    const deliveryFee = typeof providedDeliveryFee !== "undefined" ? Number(providedDeliveryFee) : 0;
+    const serviceFee = typeof providedServiceFee !== "undefined" ? Number(providedServiceFee) : 0;
+    const discount = typeof providedDiscount !== "undefined" ? Number(providedDiscount) : 0;
+
+    const totalAmount = providedTotal
+      ? Number(providedTotal)
+      : Math.max(0, computedSubtotal + deliveryFee + serviceFee - discount);
+
+    const warkopId = providedWarkopId || (items[0] && items[0].warkopId) || "";
+    const warkopName = providedWarkopName || (items[0] && items[0].warkopName) || "";
+
     const order = await Order.create({
       orderId,
       userId: currentUser.userId,
+      warkopId,
+      warkopName,
       items,
+      subtotal: computedSubtotal,
+      deliveryFee,
+      serviceFee,
+      discount,
       totalAmount,
       status: "pending",
       deliveryInfo,
-      paymentMethod,
       paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
+      paymentDetails: {
+        method: paymentMethod,
+      },
       estimatedDeliveryTime,
       orderHistory: [
         {

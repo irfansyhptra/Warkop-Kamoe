@@ -20,10 +20,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
 }) => {
   return (
-    <div className="bg-amber-50/10 backdrop-blur-xl rounded-3xl border border-amber-200/20 p-12 text-center">
+    <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-12 text-center">
       <div className="text-8xl mb-6">{icon}</div>
-      <h1 className="text-3xl font-bold text-amber-50 mb-4">{title}</h1>
-      <p className="text-amber-200/80 mb-8 max-w-md mx-auto">{description}</p>
+      <h1 className="text-3xl font-bold text-white mb-4">{title}</h1>
+      <p className="text-zinc-400 mb-8 max-w-md mx-auto">{description}</p>
 
       {actionLabel && (actionHref || onAction) && (
         <>

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Warkop, MenuItem } from "@/types";
-import { warkopList } from "@/data";
 import { useCart } from "@/hooks/useCart";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useNotification } from "@/hooks/useNotification";
@@ -30,14 +29,61 @@ export default function WarkopDetailPage() {
   const { showSuccess } = useNotification();
 
   useEffect(() => {
-    setLoading(true);
-    const warkopId = params.id as string;
-    const foundWarkop = warkopList.find((w) => w.id === warkopId);
+    const fetchWarkopData = async () => {
+      try {
+        setLoading(true);
+        const warkopId = params.id as string;
+        
+        // Fetch warkop details
+        const warkopRes = await fetch(`/api/warkops/${warkopId}`);
+        if (warkopRes.ok) {
+          const warkopJson = await warkopRes.json();
+          const warkopData = warkopJson.data?.warkop || null;
+          
+          if (warkopData) {
+            // Fetch menu items for this warkop
+            const menuRes = await fetch(`/api/menu?warkopId=${warkopId}`);
+            if (menuRes.ok) {
+              const menuJson = await menuRes.json();
+              const menuItems = Array.isArray(menuJson.data?.menuItems) 
+                ? menuJson.data.menuItems 
+                : [];
+              
+              // Combine warkop with menu
+              setWarkop({
+                ...warkopData,
+                id: warkopData._id || warkopId,
+                menu: menuItems.map((item: MenuItem & { _id?: string }) => ({
+                  ...item,
+                  id: item._id || item.id,
+                })),
+              });
+            } else {
+              // Set warkop without menu if menu fetch fails
+              setWarkop({
+                ...warkopData,
+                id: warkopData._id || warkopId,
+                menu: [],
+              });
+            }
+          } else {
+            setWarkop(null);
+          }
+        } else if (warkopRes.status === 404) {
+          setWarkop(null);
+        } else {
+          console.error("Failed to fetch warkop", await warkopRes.text());
+          setWarkop(null);
+        }
+      } catch (err) {
+        console.error("Error fetching warkop:", err);
+        setWarkop(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setTimeout(() => {
-      setWarkop(foundWarkop || null);
-      setLoading(false);
-    }, 500);
+    fetchWarkopData();
   }, [params.id]);
 
   const handleAddToCart = (menuItem: MenuItem) => {
@@ -65,10 +111,10 @@ export default function WarkopDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-500 mx-auto mb-4"></div>
-          <p className="text-amber-200">Memuat detail warkop...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Memuat detail warkop...</p>
         </div>
       </div>
     );
@@ -76,13 +122,13 @@ export default function WarkopDetailPage() {
 
   if (!warkop) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="text-6xl mb-6">☕</div>
           <h1 className="text-2xl font-bold text-white mb-4">
             Warkop Tidak Ditemukan
           </h1>
-          <p className="text-gray-400 mb-8">
+          <p className="text-zinc-400 mb-8">
             Maaf, warkop yang Anda cari tidak tersedia atau telah dipindahkan.
           </p>
           <div className="space-y-3">
@@ -95,7 +141,7 @@ export default function WarkopDetailPage() {
             </Button>
             <Button
               onClick={() => router.push("/")}
-              variant="secondary"
+              variant="outline"
               className="w-full"
             >
               🏠 Ke Beranda
@@ -107,13 +153,13 @@ export default function WarkopDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-20">
+    <div className="min-h-screen bg-[#0a0a0b] pt-20">
       <div className="container mx-auto px-6 py-8">
         {/* Header Navigation */}
         <div className="flex items-center justify-between mb-8">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-amber-200 hover:text-amber-100 transition-colors"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
           >
             <span className="text-xl">←</span>
             <span>Kembali</span>
@@ -122,8 +168,8 @@ export default function WarkopDetailPage() {
             onClick={() => toggleFavorite(warkop.id)}
             className={`p-3 rounded-full transition-all ${
               isFavorite(warkop.id)
-                ? "bg-red-500 text-white shadow-lg"
-                : "bg-white/10 text-amber-200 hover:bg-white/20"
+                ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
+                : "bg-white/5 text-zinc-400 hover:bg-white/10 border border-white/10"
             }`}
           >
             <span className="text-xl">
@@ -136,11 +182,11 @@ export default function WarkopDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="aspect-[4/3] relative rounded-3xl overflow-hidden">
+            <div className="aspect-[4/3] relative rounded-3xl overflow-hidden border border-white/10">
               <OptimizedImage
                 src={
                   warkop.images?.[selectedImage] ||
-                  "/images/placeholder-food.jpg"
+                  "/images/cappuccino.jpg"
                 }
                 alt={warkop.name}
                 fill
@@ -156,8 +202,8 @@ export default function WarkopDetailPage() {
                     onClick={() => setSelectedImage(index)}
                     className={`flex-shrink-0 aspect-square w-20 rounded-xl overflow-hidden border-2 transition-all ${
                       selectedImage === index
-                        ? "border-amber-500"
-                        : "border-transparent hover:border-amber-300"
+                        ? "border-violet-500"
+                        : "border-transparent hover:border-violet-500/50"
                     }`}
                   >
                     <OptimizedImage
@@ -180,7 +226,7 @@ export default function WarkopDetailPage() {
                 {warkop.badges?.map((badge, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 text-sm font-medium"
+                    className="px-3 py-1 rounded-full bg-violet-500/20 text-violet-400 text-sm font-medium border border-violet-500/30"
                   >
                     {badge}
                   </span>
@@ -189,10 +235,10 @@ export default function WarkopDetailPage() {
               <h1 className="text-4xl font-bold text-white mb-2">
                 {warkop.name}
               </h1>
-              <div className="flex items-center gap-4 text-gray-300 mb-4">
+              <div className="flex items-center gap-4 text-zinc-400 mb-4">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-400">⭐</span>
-                  <span className="font-semibold">{warkop.rating}</span>
+                  <span className="text-yellow-500">⭐</span>
+                  <span className="font-semibold text-white">{warkop.rating}</span>
                   <span>({warkop.totalReviews} ulasan)</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -208,7 +254,7 @@ export default function WarkopDetailPage() {
                   Deskripsi
                 </h3>
                 <p
-                  className={`text-gray-300 leading-relaxed ${
+                  className={`text-zinc-400 leading-relaxed ${
                     showFullDescription ? "" : "line-clamp-3"
                   }`}
                 >
@@ -216,20 +262,20 @@ export default function WarkopDetailPage() {
                 </p>
                 <button
                   onClick={() => setShowFullDescription(!showFullDescription)}
-                  className="text-amber-400 hover:text-amber-300 text-sm mt-2"
+                  className="text-violet-400 hover:text-violet-300 text-sm mt-2"
                 >
                   {showFullDescription ? "Sembunyikan" : "Selengkapnya"}
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 rounded-2xl p-4">
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h4 className="text-white font-medium mb-2">Status</h4>
-                  <p className="text-gray-300 text-sm">{warkop.busyLevel}</p>
+                  <p className="text-zinc-400 text-sm">{warkop.busyLevel}</p>
                 </div>
-                <div className="bg-white/5 rounded-2xl p-4">
+                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h4 className="text-white font-medium mb-2">Jam Buka</h4>
-                  <p className="text-gray-300 text-sm">
+                  <p className="text-zinc-400 text-sm">
                     {warkop.openingHours?.is24Hours
                       ? "24 Jam"
                       : `${formatTime(
@@ -240,8 +286,8 @@ export default function WarkopDetailPage() {
               </div>
 
               {warkop.promo && (
-                <div className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-2xl p-4 border border-amber-500/20">
-                  <h4 className="text-amber-300 font-medium mb-1">
+                <div className="bg-violet-500/10 backdrop-blur-sm rounded-2xl p-4 border border-violet-500/20">
+                  <h4 className="text-violet-400 font-medium mb-1">
                     🎉 Promo Aktif
                   </h4>
                   <p className="text-white text-sm">{warkop.promo}</p>
@@ -252,7 +298,7 @@ export default function WarkopDetailPage() {
         </div>
 
         {/* Tabs Navigation */}
-        <div className="flex gap-1 bg-white/5 rounded-2xl p-2 mb-8">
+        <div className="flex gap-1 bg-white/5 backdrop-blur-sm rounded-2xl p-2 mb-8 border border-white/10">
           {[
             { key: "menu", label: "Menu", icon: "🍽️" },
             { key: "info", label: "Info", icon: "ℹ️" },
@@ -265,8 +311,8 @@ export default function WarkopDetailPage() {
               }
               className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl transition-all ${
                 activeTab === tab.key
-                  ? "bg-amber-500 text-white"
-                  : "text-gray-300 hover:text-white hover:bg-white/10"
+                  ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25"
+                  : "text-zinc-400 hover:text-white hover:bg-white/10"
               }`}
             >
               <span>{tab.icon}</span>
@@ -286,8 +332,8 @@ export default function WarkopDetailPage() {
                   onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-full transition-all ${
                     selectedCategory === category
-                      ? "bg-amber-500 text-white"
-                      : "bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white"
+                      ? "bg-violet-500 text-white shadow-lg shadow-violet-500/25"
+                      : "bg-white/10 text-zinc-400 hover:bg-white/20 hover:text-white border border-white/10"
                   }`}
                 >
                   {category}

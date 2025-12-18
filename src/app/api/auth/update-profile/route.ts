@@ -29,15 +29,7 @@ export async function PUT(request: NextRequest) {
 
     // Get update data from request body
     const body = await request.json();
-    const { name, phone } = body;
-
-    // Validate input
-    if (!name || name.trim() === "") {
-      return NextResponse.json(
-        { success: false, error: "Name is required" },
-        { status: 400 }
-      );
-    }
+    const { name, phone, warkopId } = body;
 
     // Find user
     const user = await User.findById(decoded.userId);
@@ -50,9 +42,14 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update user data
-    user.name = name.trim();
+    if (name && name.trim() !== "") {
+      user.name = name.trim();
+    }
     if (phone) {
       user.phone = phone.trim();
+    }
+    if (warkopId) {
+      user.warkopId = warkopId;
     }
     user.updatedAt = new Date();
 

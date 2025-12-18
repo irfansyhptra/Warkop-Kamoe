@@ -137,10 +137,10 @@ function AuthPageContent() {
   // Show loading while checking auth state
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Memuat...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto"></div>
+          <p className="mt-4 text-zinc-400">Memuat...</p>
         </div>
       </div>
     );
@@ -149,52 +149,58 @@ function AuthPageContent() {
   // Show success message if user is logged in
   if (user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
-        <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 max-w-md">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Login Berhasil!
           </h2>
-          <p className="text-gray-600 mb-4">Selamat datang, {user.name}!</p>
-          <p className="text-sm text-gray-500">Mengalihkan ke beranda...</p>
+          <p className="text-zinc-400 mb-4">Selamat datang, {user.name}!</p>
+          <p className="text-sm text-zinc-500">Mengalihkan ke beranda...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="max-w-md w-full relative z-10">
         {/* Logo / Header */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">☕</div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Warkop Kamoe
           </h1>
-          <p className="text-gray-600">
+          <p className="text-zinc-400">
             {activeTab === "login" ? "Masuk ke akun Anda" : "Daftar akun baru"}
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex mb-8 bg-gray-100 rounded-lg p-1">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8">
+          <div className="flex mb-8 bg-white/5 rounded-lg p-1">
             <button
               onClick={() => switchTab("login")}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-300 ${
                 activeTab === "login"
-                  ? "bg-amber-600 text-white shadow-md"
-                  : "text-gray-600 hover:text-gray-800"
+                  ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25"
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               Masuk
             </button>
             <button
               onClick={() => switchTab("register")}
-              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all ${
+              className={`flex-1 py-2 px-4 rounded-md font-medium transition-all duration-300 ${
                 activeTab === "register"
-                  ? "bg-amber-600 text-white shadow-md"
-                  : "text-gray-600 hover:text-gray-800"
+                  ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25"
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               Daftar
@@ -207,7 +213,7 @@ function AuthPageContent() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Email
                 </label>
@@ -221,13 +227,14 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Password
                 </label>
@@ -241,6 +248,7 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
@@ -248,14 +256,14 @@ function AuthPageContent() {
                 <label className="flex items-center">
                   <input
                     type="checkbox"
-                    className="rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                    className="rounded border-white/20 bg-white/5 text-violet-500 focus:ring-violet-500"
                   />
-                  <span className="ml-2 text-sm text-gray-600">Ingat saya</span>
+                  <span className="ml-2 text-sm text-zinc-400">Ingat saya</span>
                 </label>
 
                 <a
                   href="#"
-                  className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                  className="text-sm text-violet-400 hover:text-violet-300 font-medium"
                 >
                   Lupa password?
                 </a>
@@ -264,17 +272,17 @@ function AuthPageContent() {
               <Button
                 type="submit"
                 disabled={formLoading}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition-colors"
+                className="w-full bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all shadow-lg shadow-violet-500/25"
               >
                 {formLoading ? "Memproses..." : "Masuk"}
               </Button>
 
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className="w-full border-t border-white/10"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 bg-[#121215] text-zinc-500">
                     Atau masuk dengan
                   </span>
                 </div>
@@ -283,19 +291,19 @@ function AuthPageContent() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center gap-2 py-2 px-4 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span>🔵</span>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-zinc-300">
                     Google
                   </span>
                 </button>
                 <button
                   type="button"
-                  className="flex items-center justify-center gap-2 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-center gap-2 py-2 px-4 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <span>📘</span>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-zinc-300">
                     Facebook
                   </span>
                 </button>
@@ -309,7 +317,7 @@ function AuthPageContent() {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Nama Lengkap
                 </label>
@@ -323,13 +331,14 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="reg-email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Email
                 </label>
@@ -343,13 +352,14 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="phone"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Nomor Telepon (Opsional)
                 </label>
@@ -362,13 +372,14 @@ function AuthPageContent() {
                     setRegisterData({ ...registerData, phone: e.target.value })
                   }
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="reg-password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Password
                 </label>
@@ -385,13 +396,14 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="confirm-password"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-medium text-zinc-300 mb-2"
                 >
                   Konfirmasi Password
                 </label>
@@ -408,6 +420,7 @@ function AuthPageContent() {
                   }
                   required
                   className="w-full"
+                  variant="dark"
                 />
               </div>
 
@@ -416,15 +429,15 @@ function AuthPageContent() {
                   id="terms"
                   type="checkbox"
                   required
-                  className="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                  className="mt-1 rounded border-white/20 bg-white/5 text-violet-500 focus:ring-violet-500"
                 />
-                <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
+                <label htmlFor="terms" className="ml-2 text-sm text-zinc-400">
                   Saya setuju dengan{" "}
-                  <a href="#" className="text-amber-600 hover:text-amber-700">
+                  <a href="#" className="text-violet-400 hover:text-violet-300">
                     Syarat & Ketentuan
                   </a>{" "}
                   dan{" "}
-                  <a href="#" className="text-amber-600 hover:text-amber-700">
+                  <a href="#" className="text-violet-400 hover:text-violet-300">
                     Kebijakan Privasi
                   </a>
                 </label>
@@ -433,7 +446,7 @@ function AuthPageContent() {
               <Button
                 type="submit"
                 disabled={formLoading}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition-colors"
+                className="w-full bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white py-3 rounded-lg font-medium transition-all shadow-lg shadow-violet-500/25"
               >
                 {formLoading ? "Memproses..." : "Daftar Sekarang"}
               </Button>
@@ -442,13 +455,13 @@ function AuthPageContent() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-600 mt-6">
+        <p className="text-center text-sm text-zinc-400 mt-6">
           {activeTab === "login" ? (
             <>
               Belum punya akun?{" "}
               <button
                 onClick={() => switchTab("register")}
-                className="text-amber-600 hover:text-amber-700 font-medium"
+                className="text-violet-400 hover:text-violet-300 font-medium"
               >
                 Daftar sekarang
               </button>
@@ -458,7 +471,7 @@ function AuthPageContent() {
               Sudah punya akun?{" "}
               <button
                 onClick={() => switchTab("login")}
-                className="text-amber-600 hover:text-amber-700 font-medium"
+                className="text-violet-400 hover:text-violet-300 font-medium"
               >
                 Masuk di sini
               </button>
@@ -474,10 +487,10 @@ export default function AuthPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
+        <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 text-lg">Memuat...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto"></div>
+            <p className="mt-4 text-zinc-400 text-lg">Memuat...</p>
           </div>
         </div>
       }

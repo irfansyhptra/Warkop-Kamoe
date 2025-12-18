@@ -82,9 +82,41 @@ export async function POST(request: NextRequest) {
     // Validation
     if (!name || !description || !ownerId || !address || !city || !phone) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { success: false, error: "Missing required fields" },
         { status: 400 }
       );
+    }
+
+    // Transform openingHours if it's array of strings to proper format
+    let formattedOpeningHours = [];
+    if (openingHours && Array.isArray(openingHours)) {
+      if (typeof openingHours[0] === 'string') {
+        // If it's array of strings like ["24 Hours"] or ["08:00 - 22:00"]
+        const hoursString = openingHours[0];
+        if (hoursString === "24 Hours") {
+          // Create 24 hours schedule
+          const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+          formattedOpeningHours = days.map(day => ({
+            day,
+            open: "00:00",
+            close: "23:59",
+            isOpen: true,
+          }));
+        } else {
+          // Parse time range like "08:00 - 22:00"
+          const [open, close] = hoursString.split(" - ");
+          const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+          formattedOpeningHours = days.map(day => ({
+            day,
+            open: open || "08:00",
+            close: close || "22:00",
+            isOpen: true,
+          }));
+        }
+      } else {
+        // Already in proper format
+        formattedOpeningHours = openingHours;
+      }
     }
 
     const warkop = await Warkop.create({
@@ -95,11 +127,11 @@ export async function POST(request: NextRequest) {
       address,
       city,
       phone,
-      openingHours: openingHours || [],
+      openingHours: formattedOpeningHours,
       categories: categories || [],
       facilities: facilities || [],
-      latitude,
-      longitude,
+      latitude: latitude || 0,
+      longitude: longitude || 0,
       rating: 0,
       reviewCount: 0,
       isVerified: false,
@@ -116,8 +148,10 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Create warkop error:", error);
+    // Return more detailed error for debugging
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
-      { error: "Internal server error" },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }

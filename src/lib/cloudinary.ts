@@ -14,6 +14,13 @@ export const uploadImage = async (
     const result = await cloudinary.uploader.upload(file, {
       folder,
       resource_type: "auto",
+      // Optimize upload
+      transformation: [
+        { width: 1000, height: 1000, crop: "limit" }, // Limit size
+        { quality: "auto:good" }, // Auto quality
+        { fetch_format: "auto" }, // Auto format (WebP if supported)
+      ],
+      timeout: 60000, // 60 seconds timeout
     });
 
     return {
@@ -22,7 +29,8 @@ export const uploadImage = async (
     };
   } catch (error) {
     console.error("Error uploading to Cloudinary:", error);
-    throw new Error("Failed to upload image");
+    const errorMessage = error instanceof Error ? error.message : "Failed to upload image";
+    throw new Error(errorMessage);
   }
 };
 

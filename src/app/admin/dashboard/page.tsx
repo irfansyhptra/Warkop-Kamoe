@@ -83,10 +83,10 @@ export default function AdminDashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Memuat dashboard...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-zinc-400 font-medium">Memuat dashboard...</p>
         </div>
       </div>
     );
@@ -97,18 +97,18 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-[#0a0a0b]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white/5 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-white">
                 Admin Dashboard
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-zinc-400 mt-1">
                 Selamat datang,{" "}
-                <span className="font-semibold">{user.name}</span>
+                <span className="font-semibold text-violet-400">{user.name}</span>
               </p>
             </div>
             <Link href="/">
@@ -136,10 +136,10 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+          <div className="mb-6 bg-red-500/10 backdrop-blur-sm border-l-4 border-red-500 p-4 rounded-lg">
             <div className="flex items-center">
               <svg
-                className="w-6 h-6 text-red-500 mr-3"
+                className="w-6 h-6 text-red-400 mr-3"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-red-400 font-medium">{error}</p>
             </div>
           </div>
         )}
@@ -160,7 +160,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Users Management */}
           <Link href="/admin/users">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden group">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl shadow-lg shadow-blue-500/20 hover:shadow-2xl hover:shadow-blue-500/30 transform hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden group">
               <div className="p-8">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
