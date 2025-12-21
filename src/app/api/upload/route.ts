@@ -6,6 +6,18 @@ export async function POST(request: NextRequest) {
   try {
     requireAuth(request);
 
+    // Check content type
+    const contentType = request.headers.get("content-type") || "";
+    console.log("Upload request content-type:", contentType);
+    
+    if (!contentType.includes("multipart/form-data")) {
+      console.error("Invalid content-type:", contentType);
+      return NextResponse.json(
+        { success: false, error: "Content-Type must be multipart/form-data" },
+        { status: 400 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
     const folder = (formData.get("folder") as string) || "warkop-kamoe";

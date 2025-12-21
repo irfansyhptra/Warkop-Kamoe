@@ -47,12 +47,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#faf6f1] to-[#f5ede3] flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-[#e8dcc8] p-8">
+    <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-[#121215] rounded-2xl border border-white/10 p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-[#f5ede3] rounded-full mb-4">
+          <div className="inline-block p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full mb-4 shadow-lg shadow-violet-500/30">
             <svg
-              className="w-12 h-12 text-[#c49a6c]"
+              className="w-12 h-12 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -65,8 +65,8 @@ export default function LoginPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-[#5c3d2e] mb-2">Masuk</h1>
-          <p className="text-[#8b6f5c]">Masuk ke akun Warkop Kamoe Anda</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Masuk</h1>
+          <p className="text-zinc-400">Masuk ke akun Warkop Kamoe Anda</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -77,7 +77,7 @@ export default function LoginPage() {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Masukkan email Anda"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -88,7 +88,7 @@ export default function LoginPage() {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Masukkan password Anda"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -104,30 +104,30 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-[#8b6f5c]">
+          <p className="text-zinc-400">
             Belum punya akun?{" "}
             <Link
               href="/auth/register"
-              className="text-[#c49a6c] hover:text-[#b8956b] font-semibold"
+              className="text-violet-400 hover:text-violet-300 font-semibold"
             >
               Daftar di sini
             </Link>
           </p>
         </div>
 
-        <div className="mt-6 p-4 bg-[#f5ede3] rounded-lg border border-[#e8dcc8]">
-          <p className="text-sm font-semibold text-[#5c3d2e] mb-2">
+        <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+          <p className="text-sm font-semibold text-white mb-2">
             📋 Demo Accounts:
           </p>
           <div className="text-xs space-y-2">
-            <div className="bg-white p-2 rounded border border-[#e8dcc8]">
-              <p className="font-semibold text-[#5c3d2e]">Admin:</p>
-              <p className="text-[#8b6f5c]">📧 admin@warkopkamoe.com</p>
-              <p className="text-[#8b6f5c]">🔑 Admin123</p>
+            <div className="bg-white/5 p-2 rounded border border-white/10">
+              <p className="font-semibold text-white">Admin:</p>
+              <p className="text-zinc-400">📧 admin@warkopkamoe.com</p>
+              <p className="text-zinc-400">🔑 Admin123</p>
             </div>
-            <div className="bg-white p-2 rounded border border-[#e8dcc8]">
-              <p className="font-semibold text-[#5c3d2e]">Owner/Customer:</p>
-              <p className="text-[#8b6f5c]">Register untuk akun baru</p>
+            <div className="bg-white/5 p-2 rounded border border-white/10">
+              <p className="font-semibold text-white">Owner/Customer:</p>
+              <p className="text-zinc-400">Register untuk akun baru</p>
             </div>
           </div>
         </div>

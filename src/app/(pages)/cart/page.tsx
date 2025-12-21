@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
-import { useNotification } from "@/hooks/useNotification";
 import Button from "@/components/ui/Button";
-import CheckoutModal from "@/components/ui/CheckoutModal";
 
 export default function CartPage() {
   const {
@@ -21,9 +18,7 @@ export default function CartPage() {
     getItemsByWarkop,
   } = useCart();
   const { isAuthenticated, authLoading } = useAuth();
-  const { showError } = useNotification();
   const router = useRouter();
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   // Show loading while checking auth
   if (authLoading) {
@@ -59,86 +54,9 @@ export default function CartPage() {
     updateNotes(itemId, notes);
   };
 
+  // Redirect langsung ke halaman checkout dengan metode pembayaran Midtrans
   const handleCheckout = () => {
-    setIsCheckoutModalOpen(true);
-  };
-
-  const handleCheckoutConfirm = (
-    deliveryInfo: {
-      name: string;
-      phone: string;
-      address: string;
-      notes?: string;
-    },
-    paymentMethod: string
-  ) => {
-    (async () => {
-      try {
-        // Build orders per warkop (one order per warkop)
-        const itemsByWarkop = getItemsByWarkop();
-        const createdOrders: Array<{ orderId?: string; _id?: string }> = [];
-
-        for (const [warkopId, payload] of Object.entries(itemsByWarkop)) {
-          const { warkopName, items } = payload as any;
-          const subtotal = items.reduce(
-            (s: number, it: any) => s + it.menuItem.price * it.quantity,
-            0
-          );
-          const deliveryFee = 5000; // keep same fee used in UI, could be dynamic
-          const totalAmount = subtotal + deliveryFee;
-
-          const body = {
-            items: items.map((it: any) => ({
-              menuItemId: it.id,
-              warkopId,
-              name: it.menuItem.name,
-              price: it.menuItem.price,
-              quantity: it.quantity,
-              notes: it.notes || "",
-              image: it.menuItem.image || "",
-            })),
-            subtotal,
-            deliveryFee,
-            totalAmount,
-            deliveryInfo,
-            paymentMethod,
-            warkopId,
-            warkopName,
-          };
-
-          const token = localStorage.getItem("warkop-kamoe-token");
-          const res = await fetch("/api/orders", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(body),
-          });
-
-          if (!res.ok) {
-            const errText = await res.text();
-            throw new Error(`Failed to create order: ${errText}`);
-          }
-
-          const json = await res.json();
-          createdOrders.push(json.data?.order || {});
-        }
-
-        // All orders created successfully
-        clearCart();
-        const firstOrder = createdOrders[0];
-        const redirectId = firstOrder?.orderId || firstOrder?._id;
-        if (redirectId) {
-          router.push(`/order-tracking/${redirectId}`);
-        } else {
-          router.push("/order-tracking/new");
-        }
-      } catch (err) {
-        console.error("Checkout error:", err);
-        showError("Checkout Gagal", (err as Error).message || "Terjadi kesalahan saat checkout");
-      }
-    })();
+    router.push("/checkout");
   };
 
   if (cartItems.length === 0) {
@@ -342,8 +260,25 @@ export default function CartPage() {
                 size="lg"
                 className="w-full mt-6 bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg shadow-violet-500/25"
               >
-                Checkout Sekarang
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  Lanjut ke Pembayaran
+                </span>
               </Button>
+
+              {/* Payment Methods Preview */}
+              <div className="mt-4 p-3 bg-white/5 rounded-xl border border-white/10">
+                <p className="text-xs text-zinc-400 mb-2 font-medium">Metode pembayaran tersedia:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[10px] rounded-full border border-emerald-500/20">QRIS</span>
+                  <span className="px-2 py-1 bg-green-500/10 text-green-400 text-[10px] rounded-full border border-green-500/20">GoPay</span>
+                  <span className="px-2 py-1 bg-orange-500/10 text-orange-400 text-[10px] rounded-full border border-orange-500/20">ShopeePay</span>
+                  <span className="px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[10px] rounded-full border border-cyan-500/20">Transfer Bank</span>
+                  <span className="px-2 py-1 bg-amber-500/10 text-amber-400 text-[10px] rounded-full border border-amber-500/20">COD</span>
+                </div>
+              </div>
 
               {/* Additional Info */}
               <div className="mt-4 text-xs text-zinc-500 space-y-1">
@@ -362,15 +297,6 @@ export default function CartPage() {
           </Link>
         </div>
       </div>
-
-      {/* Checkout Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutModalOpen}
-        onClose={() => setIsCheckoutModalOpen(false)}
-        cartItems={cartItems}
-        totalAmount={totalAmount}
-        onCheckout={handleCheckoutConfirm}
-      />
     </div>
   );
 }

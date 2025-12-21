@@ -650,17 +650,17 @@ const WarkopOwnerMenuManagement: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Filter Kategori
               </label>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 bg-white text-gray-800 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
               >
-                <option value="all">Semua Kategori</option>
+                <option value="all" className="bg-[#121215] text-white">Semua Kategori</option>
                 {uniqueCategories.map((cat) => (
-                  <option key={cat} value={cat}>
+                  <option key={cat} value={cat} className="bg-[#121215] text-white">
                     {cat}
                   </option>
                 ))}
@@ -672,22 +672,24 @@ const WarkopOwnerMenuManagement: React.FC = () => {
         {/* Menu Items Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMenuItems.length === 0 ? (
-            <div className="col-span-full bg-white rounded-xl shadow-lg p-12 text-center">
-              <svg
-                className="w-16 h-16 text-gray-400 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              <p className="text-gray-600 text-lg mb-2">Belum ada menu item</p>
-              <p className="text-gray-500 mb-6">
+            <div className="col-span-full bg-[#121215] rounded-xl border border-white/10 p-12 text-center">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-violet-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <p className="text-white text-lg font-medium mb-2">Belum ada menu item</p>
+              <p className="text-zinc-400 mb-6">
                 Mulai tambahkan menu untuk warkop Anda
               </p>
               <Button
@@ -702,10 +704,10 @@ const WarkopOwnerMenuManagement: React.FC = () => {
             filteredMenuItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-[#121215] rounded-xl border border-white/10 overflow-hidden hover:border-white/20 hover:shadow-lg hover:shadow-violet-500/10 transition-all duration-300"
               >
                 {/* Image */}
-                <div className="relative h-48 bg-gradient-to-br from-amber-200 to-amber-300">
+                <div className="relative h-48 bg-gradient-to-br from-violet-500/30 to-purple-600/30">
                   {item.image ? (
                     <Image
                       src={item.image}
@@ -716,7 +718,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <svg
-                        className="w-16 h-16 text-amber-600"
+                        className="w-16 h-16 text-violet-400"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -734,17 +736,17 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   {/* Badges */}
                   <div className="absolute top-3 right-3 flex gap-2">
                     {item.isRecommended && (
-                      <span className="px-3 py-1 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-full shadow-lg">
+                      <span className="px-3 py-1 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold rounded-full shadow-lg shadow-amber-500/30">
                         ⭐ Rekomendasi
                       </span>
                     )}
                     <span
                       className={`px-3 py-1 text-white text-xs font-bold rounded-full shadow-md ${
                         item.availability === "available"
-                          ? "bg-green-600"
+                          ? "bg-gradient-to-r from-emerald-500 to-green-600 shadow-emerald-500/30"
                           : item.availability === "limited"
-                          ? "bg-orange-600"
-                          : "bg-red-600"
+                          ? "bg-gradient-to-r from-amber-500 to-orange-600 shadow-amber-500/30"
+                          : "bg-gradient-to-r from-red-500 to-rose-600 shadow-red-500/30"
                       }`}
                     >
                       {item.availability === "available"
@@ -759,31 +761,31 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 {/* Content */}
                 <div className="p-5">
                   <div className="mb-3">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-xl font-bold text-white mb-1">
                       {item.name}
                     </h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">
+                    <p className="text-sm text-zinc-400 line-clamp-2">
                       {item.description}
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm text-gray-500">Harga</p>
-                      <p className="text-2xl font-bold text-amber-600">
+                      <p className="text-sm text-zinc-500">Harga</p>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
                         Rp {item.price.toLocaleString("id-ID")}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">Kategori</p>
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm text-zinc-500">Kategori</p>
+                      <p className="text-sm font-semibold text-white">
                         {item.category}
                       </p>
                     </div>
                   </div>
 
                   {/* Additional Info */}
-                  <div className="flex items-center gap-3 mb-4 text-xs text-gray-600">
+                  <div className="flex items-center gap-3 mb-4 text-xs text-zinc-400">
                     {item.preparationTime && (
                       <div className="flex items-center gap-1">
                         <svg
@@ -816,7 +818,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEdit(item)}
-                      className="flex-1"
+                      className="flex-1 border border-white/10 hover:bg-white/10"
                     >
                       <svg
                         className="w-4 h-4 mr-1"
@@ -837,7 +839,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(item.id)}
-                      className="flex-1 text-red-600 hover:bg-red-50"
+                      className="flex-1 text-red-400 border border-red-500/20 hover:bg-red-500/10 hover:border-red-500/30"
                     >
                       <svg
                         className="w-4 h-4 mr-1"
@@ -869,7 +871,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Nama Menu *
               </label>
               <Input
@@ -879,12 +881,12 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 onChange={handleInputChange}
                 placeholder="Contoh: Kopi Hitam Gayo"
                 required
-                variant="light"
+                variant="dark"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Deskripsi *
               </label>
               <textarea
@@ -894,13 +896,13 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                 rows={3}
                 placeholder="Deskripsi singkat tentang menu..."
                 required
-                className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Harga (Rp) *
                 </label>
                 <Input
@@ -911,12 +913,12 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   placeholder="15000"
                   required
                   min="0"
-                  variant="light"
+                  variant="dark"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Kategori *
                 </label>
                 <select
@@ -924,10 +926,10 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   value={formData.category}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-800 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                 >
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>
+                    <option key={cat} value={cat} className="bg-[#121215] text-white">
                       {cat}
                     </option>
                   ))}
@@ -937,7 +939,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Ketersediaan *
                 </label>
                 <select
@@ -945,16 +947,16 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   value={formData.availability}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 text-gray-800 focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                  className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 transition-all"
                 >
-                  <option value="available">Tersedia</option>
-                  <option value="limited">Terbatas</option>
-                  <option value="unavailable">Tidak Tersedia</option>
+                  <option value="available" className="bg-[#121215] text-white">Tersedia</option>
+                  <option value="limited" className="bg-[#121215] text-white">Terbatas</option>
+                  <option value="unavailable" className="bg-[#121215] text-white">Tidak Tersedia</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Waktu Persiapan
                 </label>
                 <Input
@@ -963,14 +965,14 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   value={formData.preparationTime}
                   onChange={handleInputChange}
                   placeholder="10-15 menit"
-                  variant="light"
+                  variant="dark"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-2">
                   Level Pedas (0-5)
                 </label>
                 <Input
@@ -981,7 +983,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   placeholder="0"
                   min="0"
                   max="5"
-                  variant="light"
+                  variant="dark"
                 />
               </div>
 
@@ -992,11 +994,11 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   name="isRecommended"
                   checked={formData.isRecommended}
                   onChange={handleCheckboxChange}
-                  className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                  className="w-4 h-4 text-violet-500 bg-white/5 border-white/20 rounded focus:ring-violet-500"
                 />
                 <label
                   htmlFor="isRecommended"
-                  className="ml-2 text-sm text-gray-700"
+                  className="ml-2 text-sm text-zinc-300"
                 >
                   Menu Rekomendasi
                 </label>
@@ -1004,14 +1006,14 @@ const WarkopOwnerMenuManagement: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Gambar Menu
               </label>
               
               {/* Image Preview */}
               {imagePreview && (
                 <div className="mb-4 relative">
-                  <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="relative w-full h-48 bg-white/5 rounded-lg overflow-hidden border border-white/10">
                     <Image
                       src={imagePreview}
                       alt="Preview"
@@ -1044,9 +1046,9 @@ const WarkopOwnerMenuManagement: React.FC = () => {
               {/* Upload Button */}
               <div className="flex gap-2">
                 <label className="flex-1">
-                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-500 hover:bg-amber-50 transition-all">
+                  <div className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-white/20 rounded-lg cursor-pointer hover:border-violet-500/50 hover:bg-violet-500/5 transition-all">
                     <svg
-                      className="w-5 h-5 text-gray-500"
+                      className="w-5 h-5 text-zinc-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1058,7 +1060,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                       />
                     </svg>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-zinc-400">
                       {selectedImageFile ? selectedImageFile.name : "Pilih Gambar"}
                     </span>
                   </div>
@@ -1070,7 +1072,7 @@ const WarkopOwnerMenuManagement: React.FC = () => {
                   />
                 </label>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-zinc-500 mt-2">
                 Format: JPG, PNG, GIF (Max 5MB). Gambar akan otomatis di-upload saat menyimpan menu.
               </p>
             </div>

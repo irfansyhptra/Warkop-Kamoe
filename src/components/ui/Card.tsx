@@ -21,12 +21,12 @@ const Card: React.FC<CardProps> = ({
   };
 
   const hoverClasses = hover
-    ? "hover:shadow-[0_32px_80px_rgba(15,23,42,0.55)] hover:-translate-y-2 transition-all duration-300"
+    ? "hover:shadow-lg hover:shadow-violet-500/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300"
     : "";
 
   return (
     <div
-      className={`rounded-3xl border border-amber-200/20 bg-gradient-to-br from-amber-50/10 to-amber-100/5 backdrop-blur-2xl shadow-[0_24px_64px_rgba(15,23,42,0.45)] ${paddingClasses[padding]} ${hoverClasses} ${className}`}
+      className={`rounded-2xl border border-white/10 bg-[#121215] backdrop-blur-xl ${paddingClasses[padding]} ${hoverClasses} ${className}`}
     >
       {children}
     </div>

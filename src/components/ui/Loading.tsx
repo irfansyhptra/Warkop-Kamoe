@@ -18,16 +18,16 @@ const Loading: React.FC<LoadingProps> = ({
   };
 
   const containerClasses = fullScreen
-    ? "min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-900 via-amber-800 to-amber-900"
+    ? "min-h-screen flex items-center justify-center bg-[#0a0a0b]"
     : "flex items-center justify-center p-8";
 
   return (
     <div className={containerClasses}>
       <div className="text-center">
         <div
-          className={`${sizeClasses[size]} border-amber-400 border-t-transparent rounded-full animate-spin mx-auto`}
+          className={`${sizeClasses[size]} border-violet-500 border-t-transparent rounded-full animate-spin mx-auto`}
         ></div>
-        {message && <p className="mt-4 text-amber-200 text-lg">{message}</p>}
+        {message && <p className="mt-4 text-zinc-400 text-lg">{message}</p>}
       </div>
     </div>
   );

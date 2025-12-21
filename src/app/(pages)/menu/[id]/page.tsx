@@ -139,9 +139,10 @@ export default function MenuDetailPage() {
       `${menuItem.name} (${quantity}x) ditambahkan ke keranjang`
     );
 
-    // Reset form
+    // Reset form and redirect to cart
     setQuantity(1);
     setNotes("");
+    router.push("/cart");
   };
 
   const handleToggleFavorite = () => {
@@ -200,10 +201,10 @@ export default function MenuDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 text-lg">Memuat detail menu...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto"></div>
+          <p className="mt-4 text-zinc-400 text-lg">Memuat detail menu...</p>
         </div>
       </div>
     );
@@ -211,17 +212,17 @@ export default function MenuDetailPage() {
 
   if (!menuItem || !warkop) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10">
           <div className="text-6xl mb-6">🍽️</div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
+          <h1 className="text-2xl font-bold text-white mb-4">
             Menu Tidak Ditemukan
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-zinc-400 mb-6">
             Menu item yang Anda cari tidak ditemukan atau tidak tersedia.
           </p>
           <Link href="/">
-            <Button className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3">
+            <Button variant="primary" className="px-8 py-3">
               Kembali ke Beranda
             </Button>
           </Link>
@@ -233,23 +234,23 @@ export default function MenuDetailPage() {
   const totalPrice = quantity * menuItem.price;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0a0a0b]">
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
+      <div className="bg-white/5 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <nav className="flex items-center space-x-2 text-sm">
-            <Link href="/" className="text-amber-600 hover:text-amber-700">
+            <Link href="/" className="text-violet-400 hover:text-violet-300">
               Beranda
             </Link>
-            <span className="text-gray-500">→</span>
+            <span className="text-zinc-500">→</span>
             <Link
               href={`/warkop/${warkop.id}`}
-              className="text-amber-600 hover:text-amber-700"
+              className="text-violet-400 hover:text-violet-300"
             >
               {warkop.name}
             </Link>
-            <span className="text-gray-500">→</span>
-            <span className="text-gray-700">{menuItem.name}</span>
+            <span className="text-zinc-500">→</span>
+            <span className="text-white">{menuItem.name}</span>
           </nav>
         </div>
       </div>
@@ -259,7 +260,7 @@ export default function MenuDetailPage() {
           {/* Image Section */}
           <div className="space-y-4">
             {/* Main Image */}
-            <div className="relative h-96 bg-gray-200 rounded-xl overflow-hidden">
+            <div className="relative h-96 bg-white/5 rounded-2xl overflow-hidden border border-white/10">
               <Image
                 src={menuItem.image || "/images/cappuccino.jpg"}
                 alt={menuItem.name}
@@ -273,8 +274,8 @@ export default function MenuDetailPage() {
 
               {/* Availability Status */}
               {menuItem.availability === "unavailable" && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                  <div className="bg-red-600 text-white px-6 py-3 rounded-lg font-bold text-lg">
+                <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                  <div className="bg-red-500 text-white px-6 py-3 rounded-xl font-bold text-lg">
                     Tidak Tersedia
                   </div>
                 </div>
@@ -282,34 +283,31 @@ export default function MenuDetailPage() {
 
               {/* Recommended Badge */}
               {menuItem.isRecommended && (
-                <div className="absolute top-4 left-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold flex items-center gap-2">
+                <div className="absolute top-4 left-4 bg-gradient-to-r from-violet-500 to-purple-600 text-white px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg shadow-violet-500/25">
                   ⭐ Rekomendasi
                 </div>
               )}
             </div>
 
             {/* Warkop Info */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <div className="bg-[#121215] rounded-2xl border border-white/10 p-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                 🏪 Dari {warkop.name}
               </h3>
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                  <div className="flex items-center gap-4 text-sm text-zinc-400 mb-2">
                     <span className="flex items-center gap-1">
                       <span className="text-yellow-500">⭐</span>
-                      <span className="font-medium">{warkop.rating}</span>
+                      <span className="font-medium text-white">{warkop.rating}</span>
                       <span>({warkop.totalReviews} ulasan)</span>
                     </span>
                     <span>📏 {warkop.distance}</span>
                   </div>
-                  <p className="text-gray-600 text-sm">📍 {warkop.location}</p>
+                  <p className="text-zinc-400 text-sm">📍 {warkop.location}</p>
                 </div>
                 <Link href={`/warkop/${warkop.id}`}>
-                  <Button
-                    variant="outline"
-                    className="text-amber-600 border-amber-600"
-                  >
+                  <Button variant="outline">
                     Lihat Warkop
                   </Button>
                 </Link>
@@ -323,11 +321,11 @@ export default function MenuDetailPage() {
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                  <h1 className="text-3xl font-bold text-white mb-2">
                     {menuItem.name}
                   </h1>
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full font-medium">
+                  <div className="flex items-center gap-4 text-sm text-zinc-400 mb-3">
+                    <span className="bg-violet-500/20 text-violet-400 px-3 py-1 rounded-full font-medium border border-violet-500/30">
                       {menuItem.category}
                     </span>
                     {menuItem.preparationTime && (
@@ -339,7 +337,7 @@ export default function MenuDetailPage() {
                 </div>
                 <button
                   onClick={handleToggleFavorite}
-                  className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+                  className="p-3 bg-white/5 hover:bg-white/10 rounded-full transition-colors border border-white/10"
                   title={
                     isFavorite(warkop.id)
                       ? "Hapus dari favorit"
@@ -350,11 +348,11 @@ export default function MenuDetailPage() {
                 </button>
               </div>
 
-              <div className="text-3xl font-bold text-amber-600 mb-4">
+              <div className="text-3xl font-bold text-violet-400 mb-4">
                 {formatPrice(menuItem.price)}
               </div>
 
-              <p className="text-gray-700 leading-relaxed mb-6">
+              <p className="text-zinc-300 leading-relaxed mb-6">
                 {menuItem.description}
               </p>
 
@@ -364,7 +362,7 @@ export default function MenuDetailPage() {
                   {menuItem.tags.map((tag, index) => (
                     <span
                       key={index}
-                      className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium"
+                      className="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-sm font-medium border border-emerald-500/30"
                     >
                       ✓ {tag}
                     </span>
@@ -374,7 +372,7 @@ export default function MenuDetailPage() {
             </div>
 
             {/* Tabs */}
-            <div className="border-b">
+            <div className="border-b border-white/10">
               <div className="flex space-x-8">
                 {[
                   { id: "details", label: "📋 Detail", icon: "📋" },
@@ -386,8 +384,8 @@ export default function MenuDetailPage() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`py-3 px-1 border-b-2 font-medium text-sm transition-colors ${
                       activeTab === tab.id
-                        ? "border-amber-500 text-amber-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700"
+                        ? "border-violet-500 text-violet-400"
+                        : "border-transparent text-zinc-500 hover:text-zinc-300"
                     }`}
                   >
                     {tab.label}
@@ -403,17 +401,17 @@ export default function MenuDetailPage() {
                   {/* Ingredients */}
                   {menuItem.ingredients && menuItem.ingredients.length > 0 && (
                     <div>
-                      <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
                         🥘 Bahan-bahan
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {menuItem.ingredients.map((ingredient, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
+                            className="flex items-center gap-2 p-2 bg-white/5 rounded-lg border border-white/10"
                           >
-                            <span className="text-green-500">•</span>
-                            <span className="text-gray-700 text-sm">
+                            <span className="text-emerald-400">•</span>
+                            <span className="text-zinc-300 text-sm">
                               {ingredient}
                             </span>
                           </div>
@@ -427,7 +425,7 @@ export default function MenuDetailPage() {
                     {menuItem.spicyLevel !== undefined &&
                       menuItem.spicyLevel > 0 && (
                         <div>
-                          <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                          <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                             🌶️ Level Pedas
                           </h4>
                           <div className="flex items-center gap-2">
@@ -438,14 +436,14 @@ export default function MenuDetailPage() {
                                   className={`text-lg ${
                                     level <= menuItem.spicyLevel!
                                       ? "text-red-500"
-                                      : "text-gray-300"
+                                      : "text-zinc-600"
                                   }`}
                                 >
                                   🌶️
                                 </span>
                               ))}
                             </div>
-                            <span className="text-sm text-gray-600">
+                            <span className="text-sm text-zinc-400">
                               {getSpicyLevelText(menuItem.spicyLevel)}
                             </span>
                           </div>
@@ -454,14 +452,14 @@ export default function MenuDetailPage() {
 
                     {menuItem.allergens && menuItem.allergens.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                        <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
                           ⚠️ Alergen
                         </h4>
                         <div className="flex gap-2 flex-wrap">
                           {menuItem.allergens.map((allergen, index) => (
                             <span
                               key={index}
-                              className="bg-red-100 text-red-800 px-2 py-1 rounded-lg text-sm"
+                              className="bg-red-500/20 text-red-400 px-2 py-1 rounded-lg text-sm border border-red-500/30"
                             >
                               {allergen}
                             </span>
@@ -475,47 +473,47 @@ export default function MenuDetailPage() {
 
               {activeTab === "nutrition" && menuItem.nutrition && (
                 <div>
-                  <h3 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
                     📊 Informasi Nutrisi
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {menuItem.nutrition.calories && (
-                      <div className="bg-blue-50 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-blue-600">
+                      <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl text-center">
+                        <div className="text-2xl font-bold text-blue-400">
                           {menuItem.nutrition.calories}
                         </div>
-                        <div className="text-sm text-gray-600">Kalori</div>
+                        <div className="text-sm text-zinc-400">Kalori</div>
                       </div>
                     )}
                     {menuItem.nutrition.protein && (
-                      <div className="bg-green-50 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-green-600">
+                      <div className="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-xl text-center">
+                        <div className="text-2xl font-bold text-emerald-400">
                           {menuItem.nutrition.protein}
                         </div>
-                        <div className="text-sm text-gray-600">Protein</div>
+                        <div className="text-sm text-zinc-400">Protein</div>
                       </div>
                     )}
                     {menuItem.nutrition.caffeine && (
-                      <div className="bg-amber-50 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-amber-600">
+                      <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl text-center">
+                        <div className="text-2xl font-bold text-amber-400">
                           {menuItem.nutrition.caffeine}
                         </div>
-                        <div className="text-sm text-gray-600">Kafein</div>
+                        <div className="text-sm text-zinc-400">Kafein</div>
                       </div>
                     )}
                     {menuItem.nutrition.fat && (
-                      <div className="bg-red-50 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-red-600">
+                      <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-center">
+                        <div className="text-2xl font-bold text-red-400">
                           {menuItem.nutrition.fat}
                         </div>
-                        <div className="text-sm text-gray-600">Lemak</div>
+                        <div className="text-sm text-zinc-400">Lemak</div>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <p className="text-sm text-gray-600">
-                      <strong>Catatan:</strong> Nilai nutrisi dapat bervariasi
+                  <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
+                    <p className="text-sm text-zinc-400">
+                      <strong className="text-white">Catatan:</strong> Nilai nutrisi dapat bervariasi
                       tergantung metode penyajian dan porsi. Konsultasikan
                       dengan ahli gizi untuk kebutuhan diet khusus.
                     </p>
@@ -526,17 +524,17 @@ export default function MenuDetailPage() {
               {activeTab === "reviews" && (
                 <div className="space-y-6">
                   {/* Review Summary */}
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-white/5 rounded-xl border border-white/10 p-4">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-semibold text-gray-800">
+                      <h3 className="font-semibold text-white">
                         ⭐ Ulasan untuk {menuItem.name}
                       </h3>
                       <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-amber-600">
+                        <span className="text-2xl font-bold text-violet-400">
                           4.7
                         </span>
                         <div className="text-yellow-400">⭐⭐⭐⭐⭐</div>
-                        <span className="text-gray-600 text-sm">
+                        <span className="text-zinc-500 text-sm">
                           (25 ulasan)
                         </span>
                       </div>
@@ -545,11 +543,11 @@ export default function MenuDetailPage() {
 
                   {/* Write Review */}
                   {user && (
-                    <div className="border rounded-lg p-4">
-                      <h4 className="font-semibold mb-3">Tulis Ulasan</h4>
+                    <div className="bg-[#121215] border border-white/10 rounded-xl p-4">
+                      <h4 className="font-semibold text-white mb-3">Tulis Ulasan</h4>
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-sm font-medium mb-1">
+                          <label className="block text-sm font-medium text-zinc-300 mb-1">
                             Rating
                           </label>
                           <div className="flex gap-1">
@@ -565,7 +563,7 @@ export default function MenuDetailPage() {
                                 className={`text-2xl ${
                                   star <= newReview.rating
                                     ? "text-yellow-400"
-                                    : "text-gray-300"
+                                    : "text-zinc-600"
                                 } hover:text-yellow-400`}
                               >
                                 ⭐
@@ -574,7 +572,7 @@ export default function MenuDetailPage() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-1">
+                          <label className="block text-sm font-medium text-zinc-300 mb-1">
                             Komentar
                           </label>
                           <textarea
@@ -586,13 +584,13 @@ export default function MenuDetailPage() {
                               }))
                             }
                             placeholder="Bagikan pengalaman Anda dengan menu ini..."
-                            className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                            className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-violet-500"
                             rows={3}
                           />
                         </div>
                         <Button
                           onClick={handleSubmitReview}
-                          className="bg-amber-600 hover:bg-amber-700"
+                          variant="primary"
                         >
                           Kirim Ulasan
                         </Button>
@@ -603,31 +601,31 @@ export default function MenuDetailPage() {
                   {/* Reviews List */}
                   <div className="space-y-4">
                     {mockMenuReviews.map((review) => (
-                      <div key={review.id} className="border rounded-lg p-4">
+                      <div key={review.id} className="bg-[#121215] border border-white/10 rounded-xl p-4">
                         <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">
                             <span className="text-lg">👤</span>
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-2">
                               <div>
-                                <h4 className="font-semibold">
+                                <h4 className="font-semibold text-white">
                                   {review.userName}
                                 </h4>
                                 <div className="flex items-center gap-2">
                                   <div className="text-yellow-400">
                                     {"⭐".repeat(review.rating)}
                                   </div>
-                                  <span className="text-gray-500 text-sm">
+                                  <span className="text-zinc-500 text-sm">
                                     {review.date}
                                   </span>
                                 </div>
                               </div>
-                              <button className="text-gray-400 hover:text-gray-600">
+                              <button className="text-zinc-500 hover:text-zinc-300">
                                 👍 {review.helpful}
                               </button>
                             </div>
-                            <p className="text-gray-700">{review.comment}</p>
+                            <p className="text-zinc-300">{review.comment}</p>
                           </div>
                         </div>
                       </div>
@@ -638,29 +636,29 @@ export default function MenuDetailPage() {
             </div>
 
             {/* Add to Cart Section */}
-            <div className="bg-white border rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">
+            <div className="bg-[#121215] border border-white/10 rounded-2xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4">
                 🛒 Tambah ke Keranjang
               </h3>
 
               <div className="space-y-4">
                 {/* Quantity Selector */}
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-700">Jumlah:</span>
+                  <span className="font-medium text-zinc-300">Jumlah:</span>
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold transition-colors"
+                      className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-lg font-bold text-white transition-colors border border-white/10"
                       disabled={quantity <= 1}
                     >
                       -
                     </button>
-                    <span className="w-12 text-center font-bold text-lg">
+                    <span className="w-12 text-center font-bold text-lg text-white">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center text-lg font-bold transition-colors"
+                      className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-lg font-bold text-white transition-colors border border-white/10"
                     >
                       +
                     </button>
@@ -669,24 +667,24 @@ export default function MenuDetailPage() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block font-medium text-gray-700 mb-2">
+                  <label className="block font-medium text-zinc-300 mb-2">
                     Catatan (opsional):
                   </label>
                   <textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Contoh: Gula sedikit, es banyak, pedas sedang..."
-                    className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    className="w-full p-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-zinc-500 resize-none focus:outline-none focus:ring-2 focus:ring-violet-500"
                     rows={2}
                   />
                 </div>
 
                 {/* Total Price */}
-                <div className="flex items-center justify-between py-3 border-t">
-                  <span className="text-lg font-medium text-gray-700">
+                <div className="flex items-center justify-between py-3 border-t border-white/10">
+                  <span className="text-lg font-medium text-zinc-300">
                     Total:
                   </span>
-                  <span className="text-2xl font-bold text-amber-600">
+                  <span className="text-2xl font-bold text-violet-400">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
@@ -696,7 +694,8 @@ export default function MenuDetailPage() {
                   <Button
                     onClick={handleAddToCart}
                     disabled={menuItem.availability === "unavailable"}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 text-lg font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    variant="primary"
+                    className="w-full py-3 text-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {menuItem.availability === "unavailable"
                       ? "Tidak Tersedia"

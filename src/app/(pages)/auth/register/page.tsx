@@ -70,12 +70,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#faf6f1] to-[#f5ede3] flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-[#e8dcc8] p-8">
+    <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center px-4 py-8">
+      <div className="max-w-md w-full bg-[#121215] rounded-2xl border border-white/10 p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <div className="inline-block p-3 bg-[#f5ede3] rounded-full mb-4">
+          <div className="inline-block p-3 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full mb-4 shadow-lg shadow-violet-500/30">
             <svg
-              className="w-12 h-12 text-[#c49a6c]"
+              className="w-12 h-12 text-white"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -88,8 +88,8 @@ export default function RegisterPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-[#5c3d2e] mb-2">Daftar</h1>
-          <p className="text-[#8b6f5c]">Buat akun Warkop Kamoe baru</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Daftar</h1>
+          <p className="text-zinc-400">Buat akun Warkop Kamoe baru</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -100,7 +100,7 @@ export default function RegisterPage() {
             value={formData.name}
             onChange={handleInputChange}
             placeholder="Masukkan nama lengkap"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -111,7 +111,7 @@ export default function RegisterPage() {
             value={formData.email}
             onChange={handleInputChange}
             placeholder="Masukkan email Anda"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -122,22 +122,22 @@ export default function RegisterPage() {
             value={formData.phone}
             onChange={handleInputChange}
             placeholder="Masukkan nomor telepon"
-            variant="light"
+            variant="dark"
           />
 
           <div>
-            <label className="block text-sm font-semibold text-[#5c3d2e] mb-2">
+            <label className="block text-sm font-semibold text-zinc-300 mb-2">
               Tipe Akun
             </label>
             <select
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 bg-[#faf6f1] border-2 border-[#d4c4b0] rounded-lg text-[#5c3d2e] font-medium focus:outline-none focus:ring-2 focus:ring-[#c49a6c] focus:border-[#c49a6c] focus:bg-white hover:border-[#c49a6c] transition-all"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-medium focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 hover:border-white/20 transition-all"
               required
             >
-              <option value="customer">Customer</option>
-              <option value="warkop_owner">Pemilik Warkop</option>
+              <option value="customer" className="bg-[#121215]">Customer</option>
+              <option value="warkop_owner" className="bg-[#121215]">Pemilik Warkop</option>
             </select>
           </div>
 
@@ -148,7 +148,7 @@ export default function RegisterPage() {
             value={formData.password}
             onChange={handleInputChange}
             placeholder="Masukkan password (min. 6 karakter)"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -159,7 +159,7 @@ export default function RegisterPage() {
             value={formData.confirmPassword}
             onChange={handleInputChange}
             placeholder="Konfirmasi password Anda"
-            variant="light"
+            variant="dark"
             required
           />
 
@@ -175,11 +175,11 @@ export default function RegisterPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-[#8b6f5c]">
+          <p className="text-zinc-400">
             Sudah punya akun?{" "}
             <Link
               href="/auth/login"
-              className="text-[#c49a6c] hover:text-[#b8956b] font-semibold"
+              className="text-violet-400 hover:text-violet-300 font-semibold"
             >
               Masuk di sini
             </Link>

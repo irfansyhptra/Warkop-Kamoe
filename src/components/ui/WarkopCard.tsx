@@ -152,9 +152,87 @@ const WarkopCard: React.FC<WarkopCardProps> = ({
           ))}
         </div>
 
-        {/* Busy Level */}
-        <div className="text-sm">
-          <span className="text-zinc-500">{warkop.busyLevel}</span>
+        {/* Status & Operating Hours */}
+        <div className="flex items-center justify-between text-sm">
+          {/* Status Indicator */}
+          {(() => {
+            // Check if warkop is active
+            if (warkop.isActive === false) {
+              return (
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                  Tutup
+                </span>
+              );
+            }
+            
+            // Check opening hours
+            let isOpen = true;
+            let currentSchedule = null;
+            
+            if (Array.isArray(warkop.openingHours)) {
+              const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+              const today = days[new Date().getDay()];
+              currentSchedule = warkop.openingHours.find((h) => h.day === today);
+              
+              if (currentSchedule && !currentSchedule.isOpen) {
+                isOpen = false;
+              } else if (currentSchedule) {
+                const now = new Date();
+                const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                isOpen = currentTime >= currentSchedule.open && currentTime <= currentSchedule.close;
+              }
+            }
+            
+            // Determine busy level
+            const busyLevel = warkop.busyLevel?.toLowerCase() || "";
+            const isBusy = busyLevel.includes("ramai") || busyLevel.includes("busy");
+            
+            if (!isOpen) {
+              return (
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+                  <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                  Tutup
+                </span>
+              );
+            }
+            
+            if (isBusy) {
+              return (
+                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                  Ramai
+                </span>
+              );
+            }
+            
+            return (
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Buka
+              </span>
+            );
+          })()}
+          
+          {/* Operating Hours */}
+          <span className="text-zinc-500">
+            {(() => {
+              if (Array.isArray(warkop.openingHours)) {
+                const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                const today = days[new Date().getDay()];
+                const schedule = warkop.openingHours.find((h) => h.day === today);
+                if (schedule && schedule.isOpen) {
+                  return `${schedule.open} - ${schedule.close}`;
+                }
+                return "Tutup hari ini";
+              } else if (warkop.openingHours) {
+                const hours = warkop.openingHours as { open: string; close: string; is24Hours?: boolean };
+                if (hours.is24Hours) return "24 Jam";
+                return `${hours.open} - ${hours.close}`;
+              }
+              return "";
+            })()}
+          </span>
         </div>
 
         {/* Promo */}

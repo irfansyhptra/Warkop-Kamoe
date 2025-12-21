@@ -50,14 +50,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calculate totals
-    const subtotal = items.reduce(
+    // Calculate totals - ensure all are integers for Midtrans
+    const subtotal = Math.round(items.reduce(
       (sum: number, item: { price: number; quantity: number }) =>
         sum + item.price * item.quantity,
       0
-    );
+    ));
     const serviceFee = Math.round(subtotal * 0.01); // 1% service fee
-    const totalAmount = subtotal + deliveryFee + serviceFee;
+    const roundedDeliveryFee = Math.round(deliveryFee);
+    const totalAmount = subtotal + roundedDeliveryFee + serviceFee;
 
     // Generate unique order ID
     const timestamp = Date.now();
@@ -83,14 +84,14 @@ export async function POST(request: NextRequest) {
           menuItemId: item.menuItemId,
           warkopId: item.warkopId,
           name: item.name,
-          price: item.price,
+          price: Math.round(item.price),
           quantity: item.quantity,
           notes: item.notes || "",
           image: item.image || "",
         })
       ),
       subtotal,
-      deliveryFee,
+      deliveryFee: roundedDeliveryFee,
       serviceFee,
       discount: 0,
       totalAmount,
@@ -105,7 +106,7 @@ export async function POST(request: NextRequest) {
       },
       deliveryDetails: {
         method: deliveryMethod || "delivery",
-        fee: deliveryFee,
+        fee: roundedDeliveryFee,
         estimatedTime: deliveryMethod === "delivery" ? "30-45 menit" : "15-20 menit",
       },
       paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
@@ -145,14 +146,20 @@ export async function POST(request: NextRequest) {
           };
         }
 
-        // Build item details
+        // Helper function to truncate string to max length
+        const truncateString = (str: string, maxLength: number): string => {
+          if (str.length <= maxLength) return str;
+          return str.substring(0, maxLength - 3) + "...";
+        };
+
+        // Build item details with truncated names (Midtrans max 50 chars)
         const itemDetails: ItemDetails[] = items.map(
           (item: { menuItemId: string; name: string; price: number; quantity: number }) => ({
-            id: item.menuItemId,
-            name: item.name,
-            price: item.price,
+            id: truncateString(item.menuItemId || "item", 50),
+            name: truncateString(item.name || "Menu Item", 50),
+            price: Math.round(item.price), // Ensure integer
             quantity: item.quantity,
-            merchantName: warkopName || "Warkop Kamoe",
+            merchantName: truncateString(warkopName || "Warkop Kamoe", 50),
           })
         );
 
@@ -161,7 +168,7 @@ export async function POST(request: NextRequest) {
           itemDetails.push({
             id: "delivery-fee",
             name: "Ongkos Kirim",
-            price: deliveryFee,
+            price: Math.round(deliveryFee),
             quantity: 1,
           });
         }
@@ -171,15 +178,21 @@ export async function POST(request: NextRequest) {
           itemDetails.push({
             id: "service-fee",
             name: "Biaya Layanan",
-            price: serviceFee,
+            price: Math.round(serviceFee),
             quantity: 1,
           });
         }
 
-        // Build transaction parameters
+        // Calculate actual total from item details to ensure it matches
+        const calculatedTotal = itemDetails.reduce(
+          (sum, item) => sum + (item.price * item.quantity),
+          0
+        );
+
+        // Build transaction parameters with calculated total
         const transactionParams = buildTransactionParams(
           orderId,
-          totalAmount,
+          calculatedTotal, // Use calculated total to ensure it matches item_details sum
           customer,
           itemDetails,
           process.env.NEXT_PUBLIC_API_URL
@@ -207,8 +220,21 @@ export async function POST(request: NextRequest) {
           },
           { status: 201 }
         );
-      } catch (midtransError) {
+      } catch (midtransError: unknown) {
         console.error("Midtrans error:", midtransError);
+
+        // Extract error message
+        let errorMessage = "Gagal membuat transaksi pembayaran";
+        if (midtransError && typeof midtransError === 'object' && 'ApiResponse' in midtransError) {
+          const apiResponse = (midtransError as { ApiResponse?: { error_messages?: string[] } }).ApiResponse;
+          if (apiResponse?.error_messages) {
+            errorMessage = apiResponse.error_messages.join(", ");
+            // Check if it's an API key issue
+            if (errorMessage.includes("unauthorized") || errorMessage.includes("Access denied")) {
+              errorMessage = "Konfigurasi Midtrans tidak valid. Silakan hubungi admin untuk memperbarui API key.";
+            }
+          }
+        }
 
         // Update order status to failed
         await Order.findByIdAndUpdate(order._id, {
@@ -217,16 +243,18 @@ export async function POST(request: NextRequest) {
             orderHistory: {
               status: "payment_failed",
               timestamp: new Date(),
-              notes: "Failed to create Midtrans transaction",
+              notes: `Failed to create Midtrans transaction: ${errorMessage}`,
             },
           },
         });
 
+        // Return error with detailed message
         return NextResponse.json(
           {
             success: false,
-            error: "Failed to create payment transaction",
+            error: errorMessage,
             orderId,
+            details: "Pembayaran online tidak dapat diproses. Silakan coba lagi atau gunakan metode COD.",
           },
           { status: 500 }
         );

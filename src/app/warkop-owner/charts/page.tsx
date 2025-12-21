@@ -119,20 +119,15 @@ export default function WarkopOwnerChartsPage() {
     delivered: "Selesai",
     cancelled: "Dibatalkan",
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-[#0a0a0b]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-[#121215] border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Analitik & Grafik
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Visualisasi data penjualan warkop Anda
-              </p>
+              <h1 className="text-3xl font-bold text-white">Analitik & Grafik</h1>
+              <p className="text-zinc-400 mt-1">Visualisasi data penjualan warkop Anda</p>
             </div>
             <div className="flex gap-3">
               <Link href="/warkop-owner/dashboard">
@@ -148,7 +143,7 @@ export default function WarkopOwnerChartsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Time Range Selector */}
         <div className="mb-8 flex items-center gap-4">
-          <span className="text-gray-700 font-medium">Periode:</span>
+          <span className="text-zinc-300 font-medium">Periode:</span>
           <div className="flex gap-2">
             {[
               { value: "7d", label: "7 Hari" },
@@ -160,8 +155,8 @@ export default function WarkopOwnerChartsPage() {
                 onClick={() => setTimeRange(option.value as "7d" | "30d" | "90d")}
                 className={`px-4 py-2 rounded-lg font-medium transition-all ${
                   timeRange === option.value
-                    ? "bg-amber-500 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-100"
+                    ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                    : "bg-white/5 text-zinc-300 hover:bg-white/10 border border-white/10"
                 }`}
               >
                 {option.label}
@@ -172,31 +167,29 @@ export default function WarkopOwnerChartsPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
-            <p className="text-red-700 font-medium">{error}</p>
+          <div className="mb-6 bg-red-500/10 border border-red-500/30 p-4 rounded-lg">
+            <p className="text-red-400 font-medium">{error}</p>
           </div>
         )}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-amber-600"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500"></div>
           </div>
         ) : (
           <div className="space-y-8">
             {/* Daily Revenue Chart */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Pendapatan Harian
-              </h2>
+            <div className="bg-[#121215] rounded-2xl border border-white/10 p-6">
+              <h2 className="text-xl font-bold text-white mb-6">Pendapatan Harian</h2>
               {chartData.dailyRevenue.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
+                <div className="text-center py-12 text-zinc-400">
                   <div className="text-4xl mb-2">📊</div>
                   <p>Belum ada data pendapatan</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {/* Bar Chart */}
-                  <div className="flex items-end gap-2 h-64 border-b border-gray-200 pb-4">
+                  <div className="flex items-end gap-2 h-64 border-b border-white/10 pb-4">
                     {chartData.dailyRevenue.map((day, index) => (
                       <div
                         key={index}
@@ -204,13 +197,13 @@ export default function WarkopOwnerChartsPage() {
                       >
                         <div className="relative w-full flex flex-col items-center">
                           {/* Tooltip */}
-                          <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                          <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-zinc-900 text-white text-xs rounded-lg px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                             <div>Rp {day.revenue.toLocaleString("id-ID")}</div>
                             <div>{day.orders} pesanan</div>
                           </div>
                           {/* Revenue Bar */}
                           <div
-                            className="w-full bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-lg transition-all duration-300 hover:from-amber-600 hover:to-amber-500"
+                            className="w-full bg-gradient-to-t from-violet-500 to-purple-600 rounded-t-lg transition-all duration-300 hover:from-violet-600 hover:to-purple-700"
                             style={{
                               height: `${(day.revenue / maxRevenue) * 200}px`,
                               minHeight: day.revenue > 0 ? "8px" : "0px",
@@ -223,10 +216,7 @@ export default function WarkopOwnerChartsPage() {
                   {/* X-axis labels */}
                   <div className="flex gap-2">
                     {chartData.dailyRevenue.map((day, index) => (
-                      <div
-                        key={index}
-                        className="flex-1 text-center text-xs text-gray-500"
-                      >
+                      <div key={index} className="flex-1 text-center text-xs text-zinc-400">
                         {new Date(day.date).toLocaleDateString("id-ID", {
                           day: "numeric",
                           month: "short",

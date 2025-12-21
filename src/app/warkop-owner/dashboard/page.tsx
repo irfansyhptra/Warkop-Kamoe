@@ -369,18 +369,18 @@ export default function WarkopOwnerDashboardPro() {
         {/* Stats Cards Row 2 - Operations */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Total Menu */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-[#e8dcc8]">
+          <div className="bg-[#121215] rounded-2xl shadow-lg hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300 overflow-hidden group border border-white/10">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#8b6f5c] uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Total Menu
                   </p>
-                  <p className="text-3xl font-bold text-[#5c3d2e] mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.totalMenuItems}
                   </p>
                 </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-[#c49a6c] to-[#b8956b] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-violet-500/20">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -397,22 +397,22 @@ export default function WarkopOwnerDashboardPro() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-[#c49a6c] to-[#b8956b]"></div>
+            <div className="h-1 bg-gradient-to-r from-violet-500 to-purple-600"></div>
           </div>
 
           {/* Available Items */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-[#e8dcc8]">
+          <div className="bg-[#121215] rounded-2xl shadow-lg hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 overflow-hidden group border border-white/10">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#8b6f5c] uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Tersedia
                   </p>
-                  <p className="text-3xl font-bold text-[#5c3d2e] mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.availableItems}
                   </p>
                 </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-emerald-500/20">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -429,22 +429,22 @@ export default function WarkopOwnerDashboardPro() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-green-500 to-emerald-500"></div>
+            <div className="h-1 bg-gradient-to-r from-emerald-500 to-green-600"></div>
           </div>
 
           {/* Total Orders */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-[#e8dcc8]">
+          <div className="bg-[#121215] rounded-2xl shadow-lg hover:shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 overflow-hidden group border border-white/10">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#8b6f5c] uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Pesanan
                   </p>
-                  <p className="text-3xl font-bold text-[#5c3d2e] mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.totalOrders}
                   </p>
                 </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -461,22 +461,22 @@ export default function WarkopOwnerDashboardPro() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <div className="h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
           </div>
 
           {/* Pending Orders */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group border border-[#e8dcc8]">
+          <div className="bg-[#121215] rounded-2xl shadow-lg hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 overflow-hidden group border border-white/10">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#8b6f5c] uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Pending
                   </p>
-                  <p className="text-3xl font-bold text-[#5c3d2e] mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.pendingOrders}
                   </p>
                 </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-500/20">
                   <svg
                     className="w-7 h-7 text-white"
                     fill="none"
@@ -493,15 +493,15 @@ export default function WarkopOwnerDashboardPro() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-yellow-500 to-orange-500"></div>
+            <div className="h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
           </div>
         </div>
 
         {/* Content Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Top Selling Items */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-[#e8dcc8]">
-            <div className="bg-gradient-to-r from-[#c49a6c] to-[#b8956b] px-6 py-4">
+          <div className="bg-[#121215] rounded-2xl shadow-lg overflow-hidden border border-white/10">
+            <div className="bg-gradient-to-r from-violet-600 to-purple-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
                   className="w-6 h-6 mr-2"
@@ -522,32 +522,37 @@ export default function WarkopOwnerDashboardPro() {
             <div className="p-6">
               {stats.topSellingItems.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-[#8b6f5c]">Belum ada data penjualan</p>
+                  <div className="w-16 h-16 bg-violet-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <p className="text-zinc-400">Belum ada data penjualan</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {stats.topSellingItems.map((item, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 bg-[#f5ede3] rounded-xl border border-[#e8dcc8] hover:shadow-md transition-shadow"
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#c49a6c] to-[#b8956b] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-violet-500/20">
                           #{index + 1}
                         </div>
                         <div>
-                          <p className="font-semibold text-[#5c3d2e]">
+                          <p className="font-semibold text-white">
                             {item.menuItem.name}
                           </p>
-                          <p className="text-sm text-[#8b6f5c]">
+                          <p className="text-sm text-zinc-400">
                             {item.quantity} terjual • Rp{" "}
                             {item.revenue.toLocaleString("id-ID")}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-[#8b6f5c]">Harga</p>
-                        <p className="font-semibold text-[#c49a6c]">
+                        <p className="text-sm text-zinc-500">Harga</p>
+                        <p className="font-semibold text-violet-400">
                           Rp {item.menuItem.price.toLocaleString("id-ID")}
                         </p>
                       </div>
@@ -559,8 +564,8 @@ export default function WarkopOwnerDashboardPro() {
           </div>
 
           {/* Recent Orders */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
+          <div className="bg-[#121215] rounded-2xl shadow-lg overflow-hidden border border-white/10">
+            <div className="bg-gradient-to-r from-cyan-600 to-blue-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
                   className="w-6 h-6 mr-2"
@@ -581,18 +586,23 @@ export default function WarkopOwnerDashboardPro() {
             <div className="p-6">
               {stats.recentOrders.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Belum ada pesanan</p>
+                  <div className="w-16 h-16 bg-cyan-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                  </div>
+                  <p className="text-zinc-400">Belum ada pesanan</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {stats.recentOrders.map((order) => (
                     <div
                       key={order.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border border-gray-100"
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all border border-white/5 hover:border-white/10"
                     >
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-white">
                             {order.customerName}
                           </p>
                           <span
@@ -604,10 +614,10 @@ export default function WarkopOwnerDashboardPro() {
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-zinc-500">
                             {new Date(order.createdAt).toLocaleString("id-ID")}
                           </p>
-                          <p className="font-semibold text-indigo-600">
+                          <p className="font-semibold text-cyan-400">
                             Rp {order.totalPrice.toLocaleString("id-ID")}
                           </p>
                         </div>

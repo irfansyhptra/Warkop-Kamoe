@@ -26,6 +26,9 @@ export interface Warkop {
   name: string;
   description: string;
   location: string;
+  address?: string;
+  city?: string;
+  phone?: string;
   coordinates: {
     lat: number;
     lng: number;
@@ -42,7 +45,13 @@ export interface Warkop {
     open: string;
     close: string;
     is24Hours: boolean;
-  };
+  } | Array<{
+    day: string;
+    open: string;
+    close: string;
+    isOpen: boolean;
+  }>;
+  isActive?: boolean;
   contactInfo: {
     phone?: string;
     whatsapp?: string;

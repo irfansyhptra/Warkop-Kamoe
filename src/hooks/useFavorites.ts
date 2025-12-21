@@ -1,78 +1,29 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useFavoritesContext } from "../contexts/FavoritesContext";
 
-const FAVORITES_STORAGE_KEY = "warkop-kamoe-favorites";
-
+// Re-export the hook from FavoritesContext for backward compatibility
 export const useFavorites = () => {
-  const [favoriteWarkops, setFavoriteWarkops] = useState<string[]>([]);
-
-  // Load favorites from localStorage on mount
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (savedFavorites) {
-      try {
-        setFavoriteWarkops(JSON.parse(savedFavorites));
-      } catch (error) {
-        console.error("Error loading favorites from localStorage:", error);
-      }
-    }
-  }, []);
-
-  // Save favorites to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(favoriteWarkops)
-    );
-  }, [favoriteWarkops]);
-
-  const addToFavorites = useCallback((warkopId: string) => {
-    setFavoriteWarkops((prev) => {
-      if (!prev.includes(warkopId)) {
-        return [...prev, warkopId];
-      }
-      return prev;
-    });
-  }, []);
-
-  const removeFromFavorites = useCallback((warkopId: string) => {
-    setFavoriteWarkops((prev) => prev.filter((id) => id !== warkopId));
-  }, []);
-
-  const toggleFavorite = useCallback((warkopId: string) => {
-    setFavoriteWarkops((prev) => {
-      if (prev.includes(warkopId)) {
-        return prev.filter((id) => id !== warkopId);
-      } else {
-        return [...prev, warkopId];
-      }
-    });
-  }, []);
-
-  const clearAllFavorites = useCallback(() => {
-    setFavoriteWarkops([]);
-  }, []);
-
-  const isFavorite = useCallback(
-    (warkopId: string) => {
-      return favoriteWarkops.includes(warkopId);
-    },
-    [favoriteWarkops]
-  );
-
-  const getFavoritesCount = useCallback(() => {
-    return favoriteWarkops.length;
-  }, [favoriteWarkops]);
-
+  const context = useFavoritesContext();
+  
+  // Return with aliases for backward compatibility
   return {
-    favoriteWarkops,
-    favorites: favoriteWarkops, // Alias for compatibility
-    addToFavorites,
-    removeFromFavorites,
-    toggleFavorite,
-    clearAllFavorites,
-    isFavorite,
-    getFavoritesCount,
+    // Original warkop-only interface
+    favoriteWarkops: context.favoriteWarkops,
+    favorites: context.favoriteWarkops, // Alias for compatibility
+    addToFavorites: context.addWarkopToFavorites,
+    removeFromFavorites: context.removeWarkopFromFavorites,
+    toggleFavorite: context.toggleWarkopFavorite,
+    isFavorite: context.isWarkopFavorite,
+    clearAllFavorites: context.clearAllFavorites,
+    getFavoritesCount: () => context.favoriteWarkops.length,
+    
+    // New menu favorites interface
+    favoriteMenuItems: context.favoriteMenuItems,
+    addMenuToFavorites: context.addMenuToFavorites,
+    removeMenuFromFavorites: context.removeMenuFromFavorites,
+    toggleMenuFavorite: context.toggleMenuFavorite,
+    isMenuFavorite: context.isMenuFavorite,
+    getTotalFavoritesCount: context.getTotalFavoritesCount,
   };
 };

@@ -90,6 +90,7 @@ export default function WarkopDetailPage() {
     if (warkop) {
       addToCart(menuItem, warkop.id, warkop.name, 1);
       showSuccess("Berhasil", "Menu ditambahkan ke keranjang!");
+      router.push("/cart");
     }
   };
 
@@ -107,6 +108,92 @@ export default function WarkopDetailPage() {
 
   const formatTime = (time: string) => {
     return time.length === 4 ? `${time.slice(0, 2)}:${time.slice(2)}` : time;
+  };
+
+  // Get current day's opening hours
+  const getCurrentDaySchedule = () => {
+    if (!warkop?.openingHours) return null;
+    
+    // If openingHours is array (new format)
+    if (Array.isArray(warkop.openingHours)) {
+      const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+      const today = days[new Date().getDay()];
+      return warkop.openingHours.find((h) => h.day === today);
+    }
+    
+    // Old format (single object)
+    return warkop.openingHours;
+  };
+
+  // Check if warkop is currently open
+  const isCurrentlyOpen = () => {
+    if (!warkop) return false;
+    
+    // Check if warkop is active
+    if (warkop.isActive === false) return false;
+    
+    const schedule = getCurrentDaySchedule();
+    if (!schedule) return false;
+    
+    // For old format
+    if ('is24Hours' in schedule) {
+      if (schedule.is24Hours) return true;
+    }
+    
+    // For new format array
+    if ('isOpen' in schedule) {
+      if (!schedule.isOpen) return false;
+    }
+    
+    // Check current time
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    
+    const openTime = schedule.open || "00:00";
+    const closeTime = schedule.close || "23:59";
+    
+    return currentTime >= openTime && currentTime <= closeTime;
+  };
+
+  // Get display text for opening hours
+  const getOpeningHoursDisplay = () => {
+    const schedule = getCurrentDaySchedule();
+    if (!schedule) return "Tidak tersedia";
+    
+    if ('is24Hours' in schedule && schedule.is24Hours) {
+      return "24 Jam";
+    }
+    
+    if ('isOpen' in schedule && !schedule.isOpen) {
+      return "Tutup Hari Ini";
+    }
+    
+    return `${formatTime(schedule.open || "")} - ${formatTime(schedule.close || "")}`;
+  };
+
+  // Get status display
+  const getStatusDisplay = () => {
+    if (warkop?.isActive === false) {
+      return { text: "Tutup", color: "red", icon: "🔴" };
+    }
+    
+    const open = isCurrentlyOpen();
+    if (!open) {
+      return { text: "Tutup", color: "red", icon: "🔴" };
+    }
+    
+    // Use busyLevel if available
+    if (warkop?.busyLevel) {
+      const level = warkop.busyLevel.toLowerCase();
+      if (level.includes("ramai") || level.includes("busy")) {
+        return { text: "Ramai", color: "amber", icon: "🟡" };
+      }
+      if (level.includes("sepi") || level.includes("quiet")) {
+        return { text: "Sepi", color: "emerald", icon: "🟢" };
+      }
+    }
+    
+    return { text: "Buka", color: "emerald", icon: "🟢" };
   };
 
   if (loading) {
@@ -271,16 +358,26 @@ export default function WarkopDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h4 className="text-white font-medium mb-2">Status</h4>
-                  <p className="text-zinc-400 text-sm">{warkop.busyLevel}</p>
+                  {(() => {
+                    const status = getStatusDisplay();
+                    return (
+                      <div className="flex items-center gap-2">
+                        <span>{status.icon}</span>
+                        <span className={`font-semibold ${
+                          status.color === "emerald" ? "text-emerald-400" :
+                          status.color === "amber" ? "text-amber-400" :
+                          "text-red-400"
+                        }`}>
+                          {status.text}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
                   <h4 className="text-white font-medium mb-2">Jam Buka</h4>
-                  <p className="text-zinc-400 text-sm">
-                    {warkop.openingHours?.is24Hours
-                      ? "24 Jam"
-                      : `${formatTime(
-                          warkop.openingHours?.open || ""
-                        )} - ${formatTime(warkop.openingHours?.close || "")}`}
+                  <p className={`text-sm font-medium ${isCurrentlyOpen() ? "text-emerald-400" : "text-red-400"}`}>
+                    {getOpeningHoursDisplay()}
                   </p>
                 </div>
               </div>
@@ -347,6 +444,8 @@ export default function WarkopDetailPage() {
                 <MenuCard
                   key={menuItem.id}
                   menuItem={menuItem}
+                  warkopId={warkop.id}
+                  warkopName={warkop.name}
                   onAddToCart={handleAddToCart}
                   showAddButton={true}
                 />
@@ -365,25 +464,100 @@ export default function WarkopDetailPage() {
         {activeTab === "info" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <div className="bg-white/5 rounded-3xl p-6">
+              {/* Opening Hours Schedule */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
+                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                  � Jam Operasional
+                </h3>
+                
+                {/* Current Status */}
+                <div className={`mb-4 p-3 rounded-xl ${
+                  isCurrentlyOpen() 
+                    ? "bg-emerald-500/10 border border-emerald-500/20" 
+                    : "bg-red-500/10 border border-red-500/20"
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-zinc-400 text-sm">Status saat ini:</span>
+                    {(() => {
+                      const status = getStatusDisplay();
+                      return (
+                        <span className={`font-semibold flex items-center gap-2 ${
+                          status.color === "emerald" ? "text-emerald-400" :
+                          status.color === "amber" ? "text-amber-400" :
+                          "text-red-400"
+                        }`}>
+                          {status.icon} {status.text}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+                
+                {/* Weekly Schedule */}
+                {Array.isArray(warkop.openingHours) ? (
+                  <div className="space-y-2">
+                    {warkop.openingHours.map((schedule, index) => {
+                      const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                      const isToday = days[new Date().getDay()] === schedule.day;
+                      
+                      return (
+                        <div 
+                          key={index}
+                          className={`flex items-center justify-between p-3 rounded-xl transition-all ${
+                            isToday 
+                              ? "bg-violet-500/10 border border-violet-500/30" 
+                              : "bg-white/5 border border-white/5"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            {isToday && <span className="text-violet-400 text-xs font-medium px-2 py-0.5 bg-violet-500/20 rounded-full">Hari Ini</span>}
+                            <span className={`font-medium ${isToday ? "text-white" : "text-zinc-300"}`}>
+                              {schedule.day}
+                            </span>
+                          </div>
+                          {schedule.isOpen ? (
+                            <span className="text-emerald-400 text-sm font-medium">
+                              {formatTime(schedule.open)} - {formatTime(schedule.close)}
+                            </span>
+                          ) : (
+                            <span className="text-red-400 text-sm font-medium">Tutup</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : warkop.openingHours ? (
+                  <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                    <p className="text-emerald-400 font-medium text-center">
+                      {(warkop.openingHours as {is24Hours?: boolean; open?: string; close?: string}).is24Hours 
+                        ? "🌙 Buka 24 Jam" 
+                        : `${formatTime((warkop.openingHours as {open: string}).open)} - ${formatTime((warkop.openingHours as {close: string}).close)}`}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-zinc-500 text-center py-4">Jadwal tidak tersedia</p>
+                )}
+              </div>
+
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold text-white mb-4">
                   📍 Lokasi
                 </h3>
-                <p className="text-gray-300 mb-4">{warkop.location}</p>
-                <Button variant="secondary" className="w-full">
+                <p className="text-zinc-300 mb-4">{warkop.location || warkop.address || "Alamat tidak tersedia"}</p>
+                <Button variant="secondary" className="w-full border-white/10 hover:bg-white/10">
                   Buka di Maps
                 </Button>
               </div>
 
-              <div className="bg-white/5 rounded-3xl p-6">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold text-white mb-4">
                   📞 Kontak
                 </h3>
                 <div className="space-y-3">
                   {warkop.contactInfo?.phone && (
                     <div className="flex items-center gap-3">
-                      <span className="text-amber-400">📞</span>
-                      <span className="text-gray-300">
+                      <span className="text-violet-400">📞</span>
+                      <span className="text-zinc-300">
                         {warkop.contactInfo.phone}
                       </span>
                     </div>
@@ -391,9 +565,15 @@ export default function WarkopDetailPage() {
                   {warkop.contactInfo?.whatsapp && (
                     <div className="flex items-center gap-3">
                       <span className="text-green-400">💬</span>
-                      <span className="text-gray-300">
+                      <span className="text-zinc-300">
                         {warkop.contactInfo.whatsapp}
                       </span>
+                    </div>
+                  )}
+                  {!warkop.contactInfo?.phone && !warkop.contactInfo?.whatsapp && warkop.phone && (
+                    <div className="flex items-center gap-3">
+                      <span className="text-violet-400">📞</span>
+                      <span className="text-zinc-300">{warkop.phone}</span>
                     </div>
                   )}
                 </div>
@@ -401,7 +581,7 @@ export default function WarkopDetailPage() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-white/5 rounded-3xl p-6">
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
                 <h3 className="text-xl font-semibold text-white mb-4">
                   🏷️ Kategori
                 </h3>
@@ -409,24 +589,27 @@ export default function WarkopDetailPage() {
                   {warkop.categories?.map((category, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-200 text-sm"
+                      className="px-3 py-1 rounded-full bg-violet-500/20 text-violet-300 text-sm border border-violet-500/30"
                     >
                       {category}
                     </span>
                   ))}
+                  {(!warkop.categories || warkop.categories.length === 0) && (
+                    <span className="text-zinc-500 text-sm">Tidak ada kategori</span>
+                  )}
                 </div>
               </div>
 
               {warkop.facilities && warkop.facilities.length > 0 && (
-                <div className="bg-white/5 rounded-3xl p-6">
+                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10">
                   <h3 className="text-xl font-semibold text-white mb-4">
                     🏢 Fasilitas
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     {warkop.facilities.map((facility, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <span className="text-amber-400">✓</span>
-                        <span className="text-gray-300 text-sm">
+                      <div key={index} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg">
+                        <span className="text-emerald-400">✓</span>
+                        <span className="text-zinc-300 text-sm">
                           {facility}
                         </span>
                       </div>

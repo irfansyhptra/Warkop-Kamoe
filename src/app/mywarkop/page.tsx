@@ -102,18 +102,18 @@ export default function MyWarkopLandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+    <div className="min-h-screen bg-[#0a0a0b]">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+      <header className="bg-[#121215]/80 backdrop-blur-xl border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
                 <span className="text-white text-2xl">☕</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Warkop Kamoe</h1>
-                <p className="text-xs text-gray-600">Partner Portal</p>
+                <h1 className="text-xl font-bold text-white">Warkop Kamoe</h1>
+                <p className="text-xs text-zinc-400">Partner Portal</p>
               </div>
             </div>
             <Link href="/">
@@ -130,19 +130,19 @@ export default function MyWarkopLandingPage() {
           {/* Left Side - Hero Content */}
           <div className="space-y-8">
             <div className="inline-block">
-              <span className="px-4 py-2 bg-amber-100 text-amber-700 rounded-full text-sm font-semibold">
+              <span className="px-4 py-2 bg-violet-500/20 text-violet-400 rounded-full text-sm font-semibold border border-violet-500/30">
                 🚀 Platform Terpercaya untuk Warkop
               </span>
             </div>
 
-            <h1 className="text-5xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-5xl font-bold text-white leading-tight">
               Kembangkan Bisnis
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">
                 Warkop Anda
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed">
+            <p className="text-xl text-zinc-400 leading-relaxed">
               Bergabunglah dengan Warkop Kamoe dan jangkau lebih banyak pelanggan.
               Platform digital untuk mengelola menu, pesanan, dan pembayaran dengan mudah.
             </p>
@@ -150,9 +150,9 @@ export default function MyWarkopLandingPage() {
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-8">
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center border border-emerald-500/30">
                   <svg
-                    className="w-6 h-6 text-green-600"
+                    className="w-6 h-6 text-emerald-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -166,19 +166,19 @@ export default function MyWarkopLandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-white mb-1">
                     Pembayaran Digital
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-zinc-400">
                     Terima pembayaran via transfer bank, e-wallet, dan kartu kredit
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center border border-cyan-500/30">
                   <svg
-                    className="w-6 h-6 text-blue-600"
+                    className="w-6 h-6 text-cyan-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -192,19 +192,19 @@ export default function MyWarkopLandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-white mb-1">
                     Analitik Penjualan
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-zinc-400">
                     Dashboard lengkap untuk monitor performa warkop Anda
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-violet-500/20 rounded-xl flex items-center justify-center border border-violet-500/30">
                   <svg
-                    className="w-6 h-6 text-purple-600"
+                    className="w-6 h-6 text-violet-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -218,19 +218,19 @@ export default function MyWarkopLandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-white mb-1">
                     Kelola Menu Mudah
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-zinc-400">
                     Update menu, harga, dan foto produk kapan saja
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                <div className="flex-shrink-0 w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center border border-amber-500/30">
                   <svg
-                    className="w-6 h-6 text-orange-600"
+                    className="w-6 h-6 text-amber-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -244,10 +244,10 @@ export default function MyWarkopLandingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-white mb-1">
                     Jangkau Pelanggan Baru
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-zinc-400">
                     Platform dengan ribuan pengguna aktif setiap hari
                   </p>
                 </div>
@@ -255,32 +255,32 @@ export default function MyWarkopLandingPage() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200">
+            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
               <div>
-                <div className="text-3xl font-bold text-gray-900">500+</div>
-                <div className="text-sm text-gray-600">Warkop Partner</div>
+                <div className="text-3xl font-bold text-white">500+</div>
+                <div className="text-sm text-zinc-400">Warkop Partner</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-gray-900">10K+</div>
-                <div className="text-sm text-gray-600">Order/Bulan</div>
+                <div className="text-3xl font-bold text-white">10K+</div>
+                <div className="text-sm text-zinc-400">Order/Bulan</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-gray-900">4.8★</div>
-                <div className="text-sm text-gray-600">Rating Partner</div>
+                <div className="text-3xl font-bold text-white">4.8★</div>
+                <div className="text-sm text-zinc-400">Rating Partner</div>
               </div>
             </div>
           </div>
 
           {/* Right Side - Auth Forms */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 lg:p-10">
+          <div className="bg-[#121215] rounded-3xl border border-white/10 p-8 lg:p-10">
             {/* Tab Switcher */}
-            <div className="flex items-center justify-center space-x-2 bg-gray-100 rounded-2xl p-2 mb-8">
+            <div className="flex items-center justify-center space-x-2 bg-white/5 rounded-2xl p-2 mb-8">
               <button
                 onClick={() => setActiveTab("login")}
                 className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${
                   activeTab === "login"
-                    ? "bg-white text-amber-600 shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                    : "text-zinc-400 hover:text-white"
                 }`}
               >
                 Masuk
@@ -289,8 +289,8 @@ export default function MyWarkopLandingPage() {
                 onClick={() => setActiveTab("register")}
                 className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all duration-200 ${
                   activeTab === "register"
-                    ? "bg-white text-amber-600 shadow-md"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+                    : "text-zinc-400 hover:text-white"
                 }`}
               >
                 Daftar
@@ -301,10 +301,10 @@ export default function MyWarkopLandingPage() {
             {activeTab === "login" && (
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     Masuk ke Akun Anda
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-zinc-400">
                     Kelola warkop Anda dengan mudah
                   </p>
                 </div>
@@ -316,7 +316,7 @@ export default function MyWarkopLandingPage() {
                   value={loginForm.email}
                   onChange={handleLoginChange}
                   placeholder="warkop@email.com"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -327,7 +327,7 @@ export default function MyWarkopLandingPage() {
                   value={loginForm.password}
                   onChange={handleLoginChange}
                   placeholder="Masukkan password"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -335,13 +335,13 @@ export default function MyWarkopLandingPage() {
                   <label className="flex items-center space-x-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                      className="w-4 h-4 text-violet-500 bg-white/5 border-white/20 rounded focus:ring-violet-500"
                     />
-                    <span className="text-gray-700">Ingat saya</span>
+                    <span className="text-zinc-400">Ingat saya</span>
                   </label>
                   <Link
                     href="/auth/forgot-password"
-                    className="text-amber-600 hover:text-amber-700 font-medium"
+                    className="text-violet-400 hover:text-violet-300 font-medium"
                   >
                     Lupa password?
                   </Link>
@@ -357,12 +357,12 @@ export default function MyWarkopLandingPage() {
                   {loading ? "Memproses..." : "Masuk"}
                 </Button>
 
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-zinc-400">
                   Belum punya akun?{" "}
                   <button
                     type="button"
                     onClick={() => setActiveTab("register")}
-                    className="text-amber-600 hover:text-amber-700 font-semibold"
+                    className="text-violet-400 hover:text-violet-300 font-semibold"
                   >
                     Daftar sekarang
                   </button>
@@ -374,10 +374,10 @@ export default function MyWarkopLandingPage() {
             {activeTab === "register" && (
               <form onSubmit={handleRegister} className="space-y-6">
                 <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     Daftarkan Warkop Anda
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-zinc-400">
                     Mulai bergabung dalam 3 langkah mudah
                   </p>
                 </div>
@@ -389,7 +389,7 @@ export default function MyWarkopLandingPage() {
                   value={registerForm.name}
                   onChange={handleRegisterChange}
                   placeholder="Nama pemilik warkop"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -400,7 +400,7 @@ export default function MyWarkopLandingPage() {
                   value={registerForm.email}
                   onChange={handleRegisterChange}
                   placeholder="warkop@email.com"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -411,7 +411,7 @@ export default function MyWarkopLandingPage() {
                   value={registerForm.phone}
                   onChange={handleRegisterChange}
                   placeholder="081234567890"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -422,7 +422,7 @@ export default function MyWarkopLandingPage() {
                   value={registerForm.password}
                   onChange={handleRegisterChange}
                   placeholder="Minimal 6 karakter"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
@@ -433,14 +433,14 @@ export default function MyWarkopLandingPage() {
                   value={registerForm.confirmPassword}
                   onChange={handleRegisterChange}
                   placeholder="Ulangi password"
-                  variant="light"
+                  variant="dark"
                   required
                 />
 
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-xl p-4">
                   <div className="flex items-start space-x-3">
                     <svg
-                      className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"
+                      className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -452,9 +452,9 @@ export default function MyWarkopLandingPage() {
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <div className="text-sm text-blue-900">
+                    <div className="text-sm text-cyan-300">
                       <p className="font-semibold mb-1">Setelah registrasi:</p>
-                      <ul className="space-y-1 text-blue-800">
+                      <ul className="space-y-1 text-cyan-400">
                         <li>• Lengkapi data warkop Anda</li>
                         <li>• Upload foto dan menu</li>
                         <li>• Tunggu verifikasi admin (1x24 jam)</li>
@@ -466,21 +466,21 @@ export default function MyWarkopLandingPage() {
                 <label className="flex items-start space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500 mt-1"
+                    className="w-4 h-4 text-violet-500 bg-white/5 border-white/20 rounded focus:ring-violet-500 mt-1"
                     required
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-zinc-400">
                     Saya setuju dengan{" "}
                     <Link
                       href="/terms"
-                      className="text-amber-600 hover:text-amber-700 font-medium"
+                      className="text-violet-400 hover:text-violet-300 font-medium"
                     >
                       Syarat & Ketentuan
                     </Link>{" "}
                     dan{" "}
                     <Link
                       href="/privacy"
-                      className="text-amber-600 hover:text-amber-700 font-medium"
+                      className="text-violet-400 hover:text-violet-300 font-medium"
                     >
                       Kebijakan Privasi
                     </Link>
@@ -497,12 +497,12 @@ export default function MyWarkopLandingPage() {
                   {loading ? "Memproses..." : "Daftar Sekarang"}
                 </Button>
 
-                <div className="text-center text-sm text-gray-600">
+                <div className="text-center text-sm text-zinc-400">
                   Sudah punya akun?{" "}
                   <button
                     type="button"
                     onClick={() => setActiveTab("login")}
-                    className="text-amber-600 hover:text-amber-700 font-semibold"
+                    className="text-violet-400 hover:text-violet-300 font-semibold"
                   >
                     Masuk di sini
                   </button>
@@ -513,12 +513,12 @@ export default function MyWarkopLandingPage() {
         </div>
 
         {/* Additional Info Section */}
-        <div className="mt-20 bg-white rounded-3xl shadow-xl p-8 lg:p-12">
+        <div className="mt-20 bg-[#121215] rounded-3xl border border-white/10 p-8 lg:p-12">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-white mb-4">
               Kenapa Bergabung dengan Warkop Kamoe?
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-zinc-400 max-w-2xl mx-auto">
               Platform yang dirancang khusus untuk membantu warkop berkembang
               dan menjangkau lebih banyak pelanggan
             </p>
@@ -526,7 +526,7 @@ export default function MyWarkopLandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="none"
@@ -541,10 +541,10 @@ export default function MyWarkopLandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Cepat & Mudah
               </h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-400">
                 Setup dalam hitungan menit. Tidak perlu coding atau technical skill
               </p>
             </div>
@@ -565,16 +565,16 @@ export default function MyWarkopLandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Aman & Terpercaya
               </h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-400">
                 Sistem pembayaran terintegrasi dengan keamanan tingkat bank
               </p>
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-cyan-500/30">
                 <svg
                   className="w-8 h-8 text-white"
                   fill="none"
@@ -589,10 +589,10 @@ export default function MyWarkopLandingPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Support 24/7
               </h3>
-              <p className="text-gray-600">
+              <p className="text-zinc-400">
                 Tim support siap membantu Anda kapan pun dibutuhkan
               </p>
             </div>
@@ -601,34 +601,34 @@ export default function MyWarkopLandingPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white mt-20">
+      <footer className="bg-[#0a0a0b] border-t border-white/10 text-white mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30">
                   <span className="text-white text-2xl">☕</span>
                 </div>
                 <div>
                   <h3 className="text-xl font-bold">Warkop Kamoe</h3>
-                  <p className="text-sm text-gray-400">Partner Portal</p>
+                  <p className="text-sm text-zinc-400">Partner Portal</p>
                 </div>
               </div>
-              <p className="text-gray-400 mb-4">
+              <p className="text-zinc-400 mb-4">
                 Platform digital terbaik untuk mengelola dan mengembangkan bisnis warkop Anda
               </p>
               <div className="flex space-x-4">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#" className="text-zinc-400 hover:text-white transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#" className="text-zinc-400 hover:text-white transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                <a href="#" className="text-zinc-400 hover:text-white transition-colors">
                   <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
                   </svg>
@@ -638,7 +638,7 @@ export default function MyWarkopLandingPage() {
 
             <div>
               <h4 className="font-semibold mb-4">Partner</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-zinc-400">
                 <li><a href="#" className="hover:text-white transition-colors">Daftar Warkop</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Dashboard</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Panduan</a></li>
@@ -648,7 +648,7 @@ export default function MyWarkopLandingPage() {
 
             <div>
               <h4 className="font-semibold mb-4">Bantuan</h4>
-              <ul className="space-y-2 text-gray-400">
+              <ul className="space-y-2 text-zinc-400">
                 <li><a href="#" className="hover:text-white transition-colors">Pusat Bantuan</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Hubungi Kami</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Syarat & Ketentuan</a></li>
@@ -657,7 +657,7 @@ export default function MyWarkopLandingPage() {
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <div className="border-t border-white/10 mt-8 pt-8 text-center text-zinc-400">
             <p>&copy; 2025 Warkop Kamoe. All rights reserved.</p>
           </div>
         </div>

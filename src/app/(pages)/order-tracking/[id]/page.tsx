@@ -71,11 +71,11 @@ const statusSteps = [
 ];
 
 const paymentStatusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: "Menunggu Pembayaran", color: "bg-yellow-100 text-yellow-800" },
-  paid: { label: "Sudah Dibayar", color: "bg-green-100 text-green-800" },
-  failed: { label: "Pembayaran Gagal", color: "bg-red-100 text-red-800" },
-  refunded: { label: "Dana Dikembalikan", color: "bg-blue-100 text-blue-800" },
-  expired: { label: "Kedaluwarsa", color: "bg-gray-100 text-gray-800" },
+  pending: { label: "Menunggu Pembayaran", color: "bg-yellow-500/20 text-yellow-400" },
+  paid: { label: "Sudah Dibayar", color: "bg-emerald-500/20 text-emerald-400" },
+  failed: { label: "Pembayaran Gagal", color: "bg-red-500/20 text-red-400" },
+  refunded: { label: "Dana Dikembalikan", color: "bg-blue-500/20 text-blue-400" },
+  expired: { label: "Kedaluwarsa", color: "bg-zinc-500/20 text-zinc-400" },
 };
 
 export default function OrderTrackingPage() {
@@ -179,10 +179,10 @@ export default function OrderTrackingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Memuat data pesanan...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto"></div>
+          <p className="mt-4 text-zinc-400">Memuat data pesanan...</p>
         </div>
       </div>
     );
@@ -190,13 +190,13 @@ export default function OrderTrackingPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+        <div className="text-center p-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10">
           <div className="text-6xl mb-4">❌</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-white mb-2">
             Pesanan Tidak Ditemukan
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-zinc-400 mb-6">
             {error || "ID pesanan tidak valid atau sudah tidak ada"}
           </p>
           <Button onClick={() => router.push("/")} variant="primary">
@@ -211,21 +211,21 @@ export default function OrderTrackingPage() {
   const paymentInfo = paymentStatusLabels[order.paymentStatus] || paymentStatusLabels.pending;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Order Header */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-gray-900">Lacak Pesanan</h1>
-            <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">
+            <h1 className="text-2xl font-bold text-white">Lacak Pesanan</h1>
+            <span className="px-3 py-1 bg-violet-500/20 text-violet-400 rounded-full text-sm font-medium">
               {order.orderId}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-gray-600">Tanggal Pesanan:</span>
-              <p className="font-medium">
+              <span className="text-zinc-400">Tanggal Pesanan:</span>
+              <p className="font-medium text-white">
                 {new Date(order.createdAt).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
@@ -236,19 +236,19 @@ export default function OrderTrackingPage() {
               </p>
             </div>
             <div>
-              <span className="text-gray-600">Estimasi:</span>
-              <p className="font-medium">
+              <span className="text-zinc-400">Estimasi:</span>
+              <p className="font-medium text-white">
                 {order.deliveryDetails?.estimatedTime || order.estimatedDeliveryTime || "-"}
               </p>
             </div>
             <div>
-              <span className="text-gray-600">Pembayaran:</span>
-              <p className="font-medium">
+              <span className="text-zinc-400">Pembayaran:</span>
+              <p className="font-medium text-white">
                 {getPaymentMethodLabel(order.paymentDetails?.method || "cod", order.paymentDetails?.midtransPaymentType)}
               </p>
             </div>
             <div>
-              <span className="text-gray-600">Status Bayar:</span>
+              <span className="text-zinc-400">Status Bayar:</span>
               <p className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${paymentInfo.color}`}>
                 {paymentInfo.label}
               </p>
@@ -257,11 +257,11 @@ export default function OrderTrackingPage() {
 
           {/* Payment Action for Pending */}
           {order.paymentStatus === "pending" && order.paymentDetails?.method === "midtrans" && order.paymentDetails?.snapToken && (
-            <div className="mt-4 p-4 bg-yellow-50 rounded-xl border border-yellow-200">
+            <div className="mt-4 p-4 bg-yellow-500/10 rounded-xl border border-yellow-500/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-yellow-800">Pembayaran Belum Selesai</p>
-                  <p className="text-sm text-yellow-700">Silakan selesaikan pembayaran Anda</p>
+                  <p className="font-medium text-yellow-400">Pembayaran Belum Selesai</p>
+                  <p className="text-sm text-yellow-400/70">Silakan selesaikan pembayaran Anda</p>
                 </div>
                 <Button
                   onClick={handleRetryPayment}
@@ -275,9 +275,9 @@ export default function OrderTrackingPage() {
               
               {/* VA Number Info */}
               {order.paymentDetails?.vaNumber && (
-                <div className="mt-3 p-3 bg-white rounded-lg">
-                  <p className="text-sm text-gray-600">Virtual Account ({order.paymentDetails.bank?.toUpperCase()}):</p>
-                  <p className="font-mono font-bold text-lg">{order.paymentDetails.vaNumber}</p>
+                <div className="mt-3 p-3 bg-white/5 rounded-lg border border-white/10">
+                  <p className="text-sm text-zinc-400">Virtual Account ({order.paymentDetails.bank?.toUpperCase()}):</p>
+                  <p className="font-mono font-bold text-lg text-white">{order.paymentDetails.vaNumber}</p>
                 </div>
               )}
             </div>
@@ -285,14 +285,14 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Status Tracking */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-6">Status Pesanan</h2>
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-6">Status Pesanan</h2>
 
           <div className="relative">
             {/* Progress Line */}
-            <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-gray-200"></div>
+            <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-white/10"></div>
             <div
-              className="absolute left-6 top-12 w-0.5 bg-amber-600 transition-all duration-500"
+              className="absolute left-6 top-12 w-0.5 bg-violet-500 transition-all duration-500"
               style={{
                 height: `${
                   (currentStatusIndex / (statusSteps.length - 1)) * 100
@@ -314,10 +314,10 @@ export default function OrderTrackingPage() {
                       relative z-10 w-12 h-12 rounded-full flex items-center justify-center text-xl
                       ${
                         isCompleted
-                          ? "bg-amber-600 text-white"
-                          : "bg-gray-200 text-gray-400"
+                          ? "bg-violet-500 text-white"
+                          : "bg-white/10 text-zinc-500"
                       }
-                      ${isCurrent ? "ring-4 ring-amber-200" : ""}
+                      ${isCurrent ? "ring-4 ring-violet-500/30" : ""}
                     `}
                     >
                       {step.icon}
@@ -327,13 +327,13 @@ export default function OrderTrackingPage() {
                     <div className="ml-4">
                       <h3
                         className={`font-medium ${
-                          isCompleted ? "text-gray-900" : "text-gray-400"
+                          isCompleted ? "text-white" : "text-zinc-500"
                         }`}
                       >
                         {step.label}
                       </h3>
                       {isCurrent && (
-                        <p className="text-sm text-amber-600 font-medium">
+                        <p className="text-sm text-violet-400 font-medium">
                           Sedang diproses...
                         </p>
                       )}
@@ -346,29 +346,29 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Detail Pesanan */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Detail Pesanan</h2>
-          <p className="text-sm text-gray-600 mb-4">dari {order.warkopName}</p>
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Detail Pesanan</h2>
+          <p className="text-sm text-zinc-400 mb-4">dari {order.warkopName}</p>
 
           <div className="space-y-4">
             {order.items.map((item, index) => (
               <div
                 key={`${item.menuItemId}-${index}`}
-                className="flex justify-between items-start border-b border-gray-100 pb-4 last:border-b-0"
+                className="flex justify-between items-start border-b border-white/10 pb-4 last:border-b-0"
               >
                 <div className="flex-1">
-                  <h3 className="font-medium">{item.name}</h3>
-                  <p className="text-gray-600 text-sm">
+                  <h3 className="font-medium text-white">{item.name}</h3>
+                  <p className="text-zinc-400 text-sm">
                     Rp {item.price.toLocaleString("id-ID")} ×{" "}
                     {item.quantity}
                   </p>
                   {item.notes && (
-                    <p className="text-gray-500 text-sm italic">
+                    <p className="text-zinc-500 text-sm italic">
                       Catatan: {item.notes}
                     </p>
                   )}
                 </div>
-                <div className="font-medium">
+                <div className="font-medium text-white">
                   Rp{" "}
                   {(item.price * item.quantity).toLocaleString(
                     "id-ID"
@@ -378,30 +378,30 @@ export default function OrderTrackingPage() {
             ))}
           </div>
 
-          <div className="border-t mt-4 pt-4 space-y-2">
-            <div className="flex justify-between text-sm">
+          <div className="border-t border-white/10 mt-4 pt-4 space-y-2">
+            <div className="flex justify-between text-sm text-zinc-300">
               <span>Subtotal</span>
               <span>Rp {order.subtotal.toLocaleString("id-ID")}</span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm text-zinc-300">
               <span>Ongkir</span>
               <span>Rp {order.deliveryFee.toLocaleString("id-ID")}</span>
             </div>
             {order.serviceFee > 0 && (
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-sm text-zinc-300">
                 <span>Biaya Layanan</span>
                 <span>Rp {order.serviceFee.toLocaleString("id-ID")}</span>
               </div>
             )}
             {order.discount > 0 && (
-              <div className="flex justify-between text-sm text-green-600">
+              <div className="flex justify-between text-sm text-emerald-400">
                 <span>Diskon</span>
                 <span>- Rp {order.discount.toLocaleString("id-ID")}</span>
               </div>
             )}
-            <div className="flex justify-between font-bold text-lg border-t pt-2">
-              <span>Total Pembayaran</span>
-              <span className="text-amber-600">
+            <div className="flex justify-between font-bold text-lg border-t border-white/10 pt-2">
+              <span className="text-white">Total Pembayaran</span>
+              <span className="text-violet-400">
                 Rp {order.totalAmount.toLocaleString("id-ID")}
               </span>
             </div>
@@ -409,35 +409,35 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Informasi Pengiriman */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">
             {order.deliveryDetails?.method === "pickup" ? "Informasi Pengambilan" : "Informasi Pengiriman"}
           </h2>
 
           <div className="space-y-2">
             <div className="flex">
-              <span className="text-gray-600 w-24">Nama:</span>
-              <span className="font-medium">{order.deliveryInfo.name}</span>
+              <span className="text-zinc-400 w-24">Nama:</span>
+              <span className="font-medium text-white">{order.deliveryInfo.name}</span>
             </div>
             <div className="flex">
-              <span className="text-gray-600 w-24">Telepon:</span>
-              <span className="font-medium">{order.deliveryInfo.phone}</span>
+              <span className="text-zinc-400 w-24">Telepon:</span>
+              <span className="font-medium text-white">{order.deliveryInfo.phone}</span>
             </div>
             {order.deliveryDetails?.method === "delivery" && order.deliveryInfo.address && (
               <div className="flex">
-                <span className="text-gray-600 w-24">Alamat:</span>
-                <span className="font-medium">{order.deliveryInfo.address}</span>
+                <span className="text-zinc-400 w-24">Alamat:</span>
+                <span className="font-medium text-white">{order.deliveryInfo.address}</span>
               </div>
             )}
             {order.deliveryInfo.notes && (
               <div className="flex">
-                <span className="text-gray-600 w-24">Catatan:</span>
-                <span className="font-medium">{order.deliveryInfo.notes}</span>
+                <span className="text-zinc-400 w-24">Catatan:</span>
+                <span className="font-medium text-white">{order.deliveryInfo.notes}</span>
               </div>
             )}
             <div className="flex">
-              <span className="text-gray-600 w-24">Metode:</span>
-              <span className="font-medium capitalize">
+              <span className="text-zinc-400 w-24">Metode:</span>
+              <span className="font-medium text-white capitalize">
                 {order.deliveryDetails?.method === "pickup" ? "Ambil Sendiri" : "Diantar"}
               </span>
             </div>
@@ -446,19 +446,19 @@ export default function OrderTrackingPage() {
 
         {/* Order History Timeline */}
         {order.orderHistory && order.orderHistory.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4">Riwayat Pesanan</h2>
+          <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+            <h2 className="text-xl font-semibold text-white mb-4">Riwayat Pesanan</h2>
             <div className="space-y-4">
               {order.orderHistory.map((history, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-amber-500 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-violet-500 rounded-full mt-2"></div>
                   <div>
-                    <p className="font-medium capitalize">{history.status.replace(/_/g, " ")}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-white capitalize">{history.status.replace(/_/g, " ")}</p>
+                    <p className="text-sm text-zinc-500">
                       {new Date(history.timestamp).toLocaleString("id-ID")}
                     </p>
                     {history.notes && (
-                      <p className="text-sm text-gray-600">{history.notes}</p>
+                      <p className="text-sm text-zinc-400">{history.notes}</p>
                     )}
                   </div>
                 </div>

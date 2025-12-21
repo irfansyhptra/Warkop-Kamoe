@@ -110,23 +110,23 @@ export default function AdminUsersPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Memuat data users...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Memuat data users...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Kelola Users</h1>
-            <p className="text-gray-600 mt-1">Manage all users in the system</p>
+            <h1 className="text-3xl font-bold text-white">Kelola Users</h1>
+            <p className="text-zinc-400 mt-1">Manage all users in the system</p>
           </div>
           <Link href="/admin/dashboard">
             <Button variant="outline">← Kembali ke Dashboard</Button>
@@ -134,25 +134,25 @@ export default function AdminUsersPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Filter by Role
               </label>
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as typeof filter)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
               >
-                <option value="all">Semua Role</option>
-                <option value="customer">Customer</option>
-                <option value="warkop_owner">Warkop Owner</option>
-                <option value="admin">Admin</option>
+                <option value="all" className="bg-[#121215]">Semua Role</option>
+                <option value="customer" className="bg-[#121215]">Customer</option>
+                <option value="warkop_owner" className="bg-[#121215]">Warkop Owner</option>
+                <option value="admin" className="bg-[#121215]">Admin</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Search
               </label>
               <input
@@ -160,7 +160,7 @@ export default function AdminUsersPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Cari nama atau email..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
               />
             </div>
           </div>
@@ -168,81 +168,81 @@ export default function AdminUsersPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="text-sm text-gray-600">Total Users</div>
-            <div className="text-3xl font-bold text-gray-900">{users.length}</div>
+          <div className="bg-[#121215] rounded-2xl border border-white/10 p-6">
+            <div className="text-sm text-zinc-400">Total Users</div>
+            <div className="text-3xl font-bold text-white">{users.length}</div>
           </div>
-          <div className="bg-blue-50 rounded-2xl shadow-sm p-6">
-            <div className="text-sm text-blue-600">Customers</div>
-            <div className="text-3xl font-bold text-blue-900">
+          <div className="bg-[#121215] rounded-2xl border border-cyan-500/30 p-6 shadow-lg shadow-cyan-500/10">
+            <div className="text-sm text-cyan-400">Customers</div>
+            <div className="text-3xl font-bold text-white">
               {users.filter((u) => u.role === "customer").length}
             </div>
           </div>
-          <div className="bg-green-50 rounded-2xl shadow-sm p-6">
-            <div className="text-sm text-green-600">Warkop Owners</div>
-            <div className="text-3xl font-bold text-green-900">
+          <div className="bg-[#121215] rounded-2xl border border-emerald-500/30 p-6 shadow-lg shadow-emerald-500/10">
+            <div className="text-sm text-emerald-400">Warkop Owners</div>
+            <div className="text-3xl font-bold text-white">
               {users.filter((u) => u.role === "warkop_owner").length}
             </div>
           </div>
-          <div className="bg-purple-50 rounded-2xl shadow-sm p-6">
-            <div className="text-sm text-purple-600">Admins</div>
-            <div className="text-3xl font-bold text-purple-900">
+          <div className="bg-[#121215] rounded-2xl border border-violet-500/30 p-6 shadow-lg shadow-violet-500/10">
+            <div className="text-sm text-violet-400">Admins</div>
+            <div className="text-3xl font-bold text-white">
               {users.filter((u) => u.role === "admin").length}
             </div>
           </div>
         </div>
 
         {/* Users Table */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/5">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Phone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Registered
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-right text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-white/10">
                 {filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
+                  <tr key={user._id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <span className="text-indigo-600 font-semibold">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                          <span className="text-white font-semibold">
                             {user.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-white">
                             {user.name}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{user.email}</div>
+                      <div className="text-sm text-zinc-300">{user.email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm text-zinc-300">
                         {user.phone || "-"}
                       </div>
                     </td>
@@ -250,31 +250,31 @@ export default function AdminUsersPage() {
                       <select
                         value={user.role}
                         onChange={(e) => handleUpdateRole(user._id, e.target.value)}
-                        className="text-sm px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="text-sm px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
                       >
-                        <option value="customer">Customer</option>
-                        <option value="warkop_owner">Warkop Owner</option>
-                        <option value="admin">Admin</option>
+                        <option value="customer" className="bg-[#121215]">Customer</option>
+                        <option value="warkop_owner" className="bg-[#121215]">Warkop Owner</option>
+                        <option value="admin" className="bg-[#121215]">Admin</option>
                       </select>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           user.isVerified
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                            : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
                         }`}
                       >
                         {user.isVerified ? "Verified" : "Unverified"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-zinc-400">
                       {new Date(user.createdAt).toLocaleDateString("id-ID")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleDeleteUser(user._id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-red-400 hover:text-red-300"
                       >
                         Delete
                       </button>
@@ -287,7 +287,7 @@ export default function AdminUsersPage() {
 
           {filteredUsers.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">Tidak ada user ditemukan</p>
+              <p className="text-zinc-500">Tidak ada user ditemukan</p>
             </div>
           )}
         </div>

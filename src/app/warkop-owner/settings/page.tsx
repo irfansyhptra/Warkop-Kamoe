@@ -27,6 +27,16 @@ interface WarkopData {
   isVerified: boolean;
 }
 
+const defaultOpeningHours = [
+  { day: "Senin", open: "08:00", close: "22:00", isOpen: true },
+  { day: "Selasa", open: "08:00", close: "22:00", isOpen: true },
+  { day: "Rabu", open: "08:00", close: "22:00", isOpen: true },
+  { day: "Kamis", open: "08:00", close: "22:00", isOpen: true },
+  { day: "Jumat", open: "08:00", close: "22:00", isOpen: true },
+  { day: "Sabtu", open: "08:00", close: "23:00", isOpen: true },
+  { day: "Minggu", open: "08:00", close: "23:00", isOpen: true },
+];
+
 export default function WarkopSettingsPage() {
   const router = useRouter();
   const { user, isAuthenticated, authLoading } = useAuth();
@@ -60,6 +70,8 @@ export default function WarkopSettingsPage() {
   ];
 
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
+  const [openingHours, setOpeningHours] = useState(defaultOpeningHours);
+  const [warkopStatus, setWarkopStatus] = useState<"open" | "closed" | "busy">("open");
 
   // Check authentication
   useEffect(() => {
@@ -102,6 +114,12 @@ export default function WarkopSettingsPage() {
             phone: w.phone || "",
           });
           setSelectedFacilities(w.facilities || []);
+          // Set opening hours from database or use default
+          if (w.openingHours && w.openingHours.length > 0) {
+            setOpeningHours(w.openingHours);
+          }
+          // Determine warkop status based on isActive
+          setWarkopStatus(w.isActive ? "open" : "closed");
         }
       }
     } catch (error) {
@@ -110,6 +128,18 @@ export default function WarkopSettingsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOpeningHoursChange = (
+    index: number,
+    field: "open" | "close" | "isOpen",
+    value: string | boolean
+  ) => {
+    setOpeningHours((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
   };
 
   const handleInputChange = (
@@ -147,57 +177,55 @@ export default function WarkopSettingsPage() {
       setUploadingImage(true);
       const token = localStorage.getItem("warkop-kamoe-token");
 
-      // Convert to base64
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64 = reader.result as string;
+      // Use FormData for proper multipart/form-data upload
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      formDataUpload.append("folder", "warkops");
 
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            image: base64,
-            folder: "warkops",
-          }),
-        });
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formDataUpload,
+      });
 
-        if (uploadResponse.ok) {
-          const uploadData = await uploadResponse.json();
-          if (uploadData.success && uploadData.data?.url) {
-            // Add image to warkop
-            const newImages = [...(warkop?.images || []), uploadData.data.url];
+      if (uploadResponse.ok) {
+        const uploadData = await uploadResponse.json();
+        if (uploadData.success && (uploadData.url || uploadData.data?.url)) {
+          const imageUrl = uploadData.url || uploadData.data?.url;
+          // Add image to warkop
+          const newImages = [...(warkop?.images || []), imageUrl];
 
-            // Update warkop with new image
-            const updateResponse = await fetch(`/api/warkops/${warkop?._id}`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({ images: newImages }),
-            });
+          // Update warkop with new image
+          const updateResponse = await fetch(`/api/warkops/${warkop?._id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ images: newImages }),
+          });
 
-            if (updateResponse.ok) {
-              setWarkop((prev) =>
-                prev ? { ...prev, images: newImages } : null
-              );
-              showSuccess("Berhasil", "Gambar berhasil diupload");
-            } else {
-              showError("Error", "Gagal menyimpan gambar");
-            }
+          if (updateResponse.ok) {
+            setWarkop((prev) =>
+              prev ? { ...prev, images: newImages } : null
+            );
+            showSuccess("Berhasil", "Gambar berhasil diupload");
+          } else {
+            showError("Error", "Gagal menyimpan gambar");
           }
         } else {
           showError("Error", "Gagal upload gambar");
         }
-        setUploadingImage(false);
-      };
-      reader.readAsDataURL(file);
+      } else {
+        const errorData = await uploadResponse.json();
+        showError("Error", errorData.error || "Gagal upload gambar");
+      }
     } catch (error) {
       console.error("Error uploading image:", error);
       showError("Error", "Terjadi kesalahan saat upload gambar");
+    } finally {
       setUploadingImage(false);
     }
   };
@@ -246,6 +274,8 @@ export default function WarkopSettingsPage() {
         body: JSON.stringify({
           ...formData,
           facilities: selectedFacilities,
+          openingHours: openingHours,
+          isActive: warkopStatus !== "closed",
         }),
       });
 
@@ -266,10 +296,10 @@ export default function WarkopSettingsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-amber-600 mx-auto mb-4"></div>
-          <p className="text-amber-800">Memuat pengaturan...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-violet-500 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Memuat pengaturan...</p>
         </div>
       </div>
     );
@@ -277,13 +307,15 @@ export default function WarkopSettingsPage() {
 
   if (!warkop) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
-          <div className="text-6xl mb-6">☕</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center">
+            <span className="text-4xl">☕</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-4">
             Warkop Belum Terdaftar
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-zinc-400 mb-6">
             Silakan daftarkan warkop Anda terlebih dahulu
           </p>
           <Button onClick={() => router.push("/warkop-owner/setup")}>
@@ -295,15 +327,15 @@ export default function WarkopSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-white">
               Pengaturan Warkop
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-zinc-400 mt-1">
               Kelola informasi dan gambar warkop Anda
             </p>
           </div>
@@ -316,9 +348,9 @@ export default function WarkopSettingsPage() {
         </div>
 
         {/* Images Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">📷 Foto Warkop</h2>
-          <p className="text-gray-600 text-sm mb-4">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">📷 Foto Warkop</h2>
+          <p className="text-zinc-400 text-sm mb-4">
             Upload foto warkop Anda untuk menarik lebih banyak pelanggan
           </p>
 
@@ -358,14 +390,14 @@ export default function WarkopSettingsPage() {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingImage}
-              className="aspect-square border-2 border-dashed border-amber-300 rounded-xl flex flex-col items-center justify-center hover:border-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
+              className="aspect-square border-2 border-dashed border-white/20 rounded-xl flex flex-col items-center justify-center hover:border-violet-500/50 hover:bg-violet-500/5 transition-colors disabled:opacity-50"
             >
               {uploadingImage ? (
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-amber-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-violet-500"></div>
               ) : (
                 <>
                   <svg
-                    className="w-8 h-8 text-amber-500 mb-2"
+                    className="w-8 h-8 text-violet-400 mb-2"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -377,7 +409,7 @@ export default function WarkopSettingsPage() {
                       d="M12 4v16m8-8H4"
                     />
                   </svg>
-                  <span className="text-sm text-amber-600">Tambah Foto</span>
+                  <span className="text-sm text-violet-400">Tambah Foto</span>
                 </>
               )}
             </button>
@@ -391,14 +423,14 @@ export default function WarkopSettingsPage() {
             className="hidden"
           />
 
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-zinc-500">
             Format: JPG, PNG, WebP. Maksimal 5MB per file.
           </p>
         </div>
 
         {/* Basic Info Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">📋 Informasi Dasar</h2>
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">📋 Informasi Dasar</h2>
 
           <div className="space-y-4">
             <Input
@@ -408,10 +440,11 @@ export default function WarkopSettingsPage() {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Nama warkop Anda"
+              variant="dark"
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Deskripsi
               </label>
               <textarea
@@ -420,7 +453,7 @@ export default function WarkopSettingsPage() {
                 onChange={handleInputChange}
                 placeholder="Ceritakan tentang warkop Anda..."
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/50 resize-none transition-all"
               />
             </div>
 
@@ -431,6 +464,7 @@ export default function WarkopSettingsPage() {
               value={formData.address}
               onChange={handleInputChange}
               placeholder="Alamat lengkap"
+              variant="dark"
             />
 
             <div className="grid grid-cols-2 gap-4">
@@ -441,6 +475,7 @@ export default function WarkopSettingsPage() {
                 value={formData.city}
                 onChange={handleInputChange}
                 placeholder="Nama kota"
+                variant="dark"
               />
               <Input
                 label="Nomor Telepon"
@@ -449,61 +484,266 @@ export default function WarkopSettingsPage() {
                 value={formData.phone}
                 onChange={handleInputChange}
                 placeholder="021-12345678"
+                variant="dark"
               />
             </div>
           </div>
         </div>
 
+        {/* Operating Hours Section */}
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">🕐 Jam Operasional</h2>
+          <p className="text-zinc-400 text-sm mb-4">
+            Atur jam buka dan tutup warkop untuk setiap hari
+          </p>
+
+          <div className="space-y-3">
+            {openingHours.map((schedule, index) => (
+              <div
+                key={schedule.day}
+                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                  schedule.isOpen
+                    ? "bg-white/5 border-white/10"
+                    : "bg-zinc-900/50 border-white/5"
+                }`}
+              >
+                {/* Day Toggle */}
+                <label className="flex items-center gap-3 w-32 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={schedule.isOpen}
+                    onChange={(e) =>
+                      handleOpeningHoursChange(index, "isOpen", e.target.checked)
+                    }
+                    className="w-5 h-5 rounded accent-violet-500"
+                  />
+                  <span
+                    className={`font-medium ${
+                      schedule.isOpen ? "text-white" : "text-zinc-500"
+                    }`}
+                  >
+                    {schedule.day}
+                  </span>
+                </label>
+
+                {/* Time Inputs */}
+                {schedule.isOpen ? (
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-400 text-sm">Buka:</span>
+                      <input
+                        type="time"
+                        value={schedule.open}
+                        onChange={(e) =>
+                          handleOpeningHoursChange(index, "open", e.target.value)
+                        }
+                        className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                      />
+                    </div>
+                    <span className="text-zinc-500">—</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-zinc-400 text-sm">Tutup:</span>
+                      <input
+                        type="time"
+                        value={schedule.close}
+                        onChange={(e) =>
+                          handleOpeningHoursChange(index, "close", e.target.value)
+                        }
+                        className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-zinc-500 text-sm italic">Tutup</span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
+            <button
+              type="button"
+              onClick={() => {
+                setOpeningHours((prev) =>
+                  prev.map((h) => ({ ...h, isOpen: true }))
+                );
+              }}
+              className="px-4 py-2 text-sm bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 transition-colors border border-emerald-500/20"
+            >
+              ✓ Buka Semua Hari
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setOpeningHours((prev) =>
+                  prev.map((h) => ({ ...h, open: "08:00", close: "22:00" }))
+                );
+              }}
+              className="px-4 py-2 text-sm bg-violet-500/10 text-violet-400 rounded-lg hover:bg-violet-500/20 transition-colors border border-violet-500/20"
+            >
+              🕐 Set Jam Default (08:00 - 22:00)
+            </button>
+          </div>
+        </div>
+
+        {/* Warkop Status Section */}
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">🏪 Status Warkop</h2>
+          <p className="text-zinc-400 text-sm mb-4">
+            Atur status ketersediaan warkop Anda saat ini
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Open Status */}
+            <button
+              type="button"
+              onClick={() => setWarkopStatus("open")}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                warkopStatus === "open"
+                  ? "border-emerald-500 bg-emerald-500/10"
+                  : "border-white/10 hover:border-white/20 hover:bg-white/5"
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                <span className="text-3xl mb-2">🟢</span>
+                <span
+                  className={`font-semibold ${
+                    warkopStatus === "open" ? "text-emerald-400" : "text-white"
+                  }`}
+                >
+                  Buka
+                </span>
+                <span className="text-xs text-zinc-400 mt-1">
+                  Warkop aktif menerima pesanan
+                </span>
+              </div>
+            </button>
+
+            {/* Busy Status */}
+            <button
+              type="button"
+              onClick={() => setWarkopStatus("busy")}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                warkopStatus === "busy"
+                  ? "border-amber-500 bg-amber-500/10"
+                  : "border-white/10 hover:border-white/20 hover:bg-white/5"
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                <span className="text-3xl mb-2">🟡</span>
+                <span
+                  className={`font-semibold ${
+                    warkopStatus === "busy" ? "text-amber-400" : "text-white"
+                  }`}
+                >
+                  Ramai
+                </span>
+                <span className="text-xs text-zinc-400 mt-1">
+                  Buka tapi sedang ramai
+                </span>
+              </div>
+            </button>
+
+            {/* Closed Status */}
+            <button
+              type="button"
+              onClick={() => setWarkopStatus("closed")}
+              className={`p-4 rounded-xl border-2 transition-all ${
+                warkopStatus === "closed"
+                  ? "border-red-500 bg-red-500/10"
+                  : "border-white/10 hover:border-white/20 hover:bg-white/5"
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                <span className="text-3xl mb-2">🔴</span>
+                <span
+                  className={`font-semibold ${
+                    warkopStatus === "closed" ? "text-red-400" : "text-white"
+                  }`}
+                >
+                  Tutup
+                </span>
+                <span className="text-xs text-zinc-400 mt-1">
+                  Tidak menerima pesanan
+                </span>
+              </div>
+            </button>
+          </div>
+
+          {/* Current Status Display */}
+          <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
+            <div className="flex items-center justify-between">
+              <span className="text-zinc-400">Status saat ini:</span>
+              <span
+                className={`px-4 py-1.5 rounded-full font-medium ${
+                  warkopStatus === "open"
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : warkopStatus === "busy"
+                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                    : "bg-red-500/20 text-red-400 border border-red-500/30"
+                }`}
+              >
+                {warkopStatus === "open"
+                  ? "🟢 Buka"
+                  : warkopStatus === "busy"
+                  ? "🟡 Ramai"
+                  : "🔴 Tutup"}
+              </span>
+            </div>
+          </div>
+        </div>
+
         {/* Facilities Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">🏪 Fasilitas</h2>
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">🏪 Fasilitas</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {facilities.map((facility) => (
               <label
                 key={facility}
-                className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
                   selectedFacilities.includes(facility)
-                    ? "border-amber-500 bg-amber-50"
-                    : "border-gray-200 hover:bg-gray-50"
+                    ? "border-violet-500/50 bg-violet-500/10"
+                    : "border-white/10 hover:bg-white/5"
                 }`}
               >
                 <input
                   type="checkbox"
                   checked={selectedFacilities.includes(facility)}
                   onChange={() => handleFacilityToggle(facility)}
-                  className="mr-2 accent-amber-600"
+                  className="mr-2 accent-violet-500"
                 />
-                <span className="text-sm">{facility}</span>
+                <span className="text-sm text-zinc-300">{facility}</span>
               </label>
             ))}
           </div>
         </div>
 
-        {/* Status Section */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">📊 Status</h2>
+        {/* Verification Status Section */}
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-6 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-4">✅ Status Verifikasi</h2>
+          <p className="text-zinc-400 text-sm mb-4">
+            Status verifikasi warkop oleh admin
+          </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div
               className={`flex items-center px-4 py-2 rounded-full ${
                 warkop.isVerified
-                  ? "bg-green-100 text-green-700"
-                  : "bg-yellow-100 text-yellow-700"
+                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                  : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
               }`}
             >
               {warkop.isVerified ? "✓ Terverifikasi" : "⏳ Menunggu Verifikasi"}
             </div>
-            <div
-              className={`flex items-center px-4 py-2 rounded-full ${
-                warkop.isActive
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {warkop.isActive ? "✓ Aktif" : "✗ Nonaktif"}
-            </div>
           </div>
+          
+          {!warkop.isVerified && (
+            <p className="text-zinc-500 text-sm mt-4 p-3 bg-amber-500/5 rounded-lg border border-amber-500/20">
+              💡 Warkop Anda sedang dalam proses verifikasi oleh admin. Pastikan semua informasi sudah lengkap dan benar.
+            </p>
+          )}
         </div>
 
         {/* Save Button */}

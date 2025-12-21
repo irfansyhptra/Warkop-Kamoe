@@ -14,11 +14,11 @@ const Badge: React.FC<BadgeProps> = ({
   className = "",
 }) => {
   const variantClasses = {
-    default: "bg-amber-100/20 text-amber-200 border-amber-300/30",
-    success: "bg-green-100/20 text-green-200 border-green-300/30",
-    warning: "bg-yellow-100/20 text-yellow-200 border-yellow-300/30",
-    error: "bg-red-100/20 text-red-200 border-red-300/30",
-    info: "bg-blue-100/20 text-blue-200 border-blue-300/30",
+    default: "bg-violet-500/20 text-violet-400 border-violet-500/30",
+    success: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+    warning: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    error: "bg-red-500/20 text-red-400 border-red-500/30",
+    info: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
   };
 
   const sizeClasses = {

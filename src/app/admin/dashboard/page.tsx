@@ -294,18 +294,18 @@ export default function AdminDashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {/* Total Users */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 hover:border-cyan-500/30 transition-all duration-300 overflow-hidden group">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Total Users
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.totalUsers.toLocaleString()}
                   </p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-cyan-500/20">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -322,25 +322,25 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
+            <div className="h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
           </div>
 
           {/* Total Orders */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 hover:border-amber-500/30 transition-all duration-300 overflow-hidden group">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Total Pesanan
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.totalOrders.toLocaleString()}
                   </p>
-                  <p className="text-sm text-orange-600 font-medium mt-1">
+                  <p className="text-sm text-amber-400 font-medium mt-1">
                     {stats.pendingOrders} pending
                   </p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-amber-500/20">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -357,22 +357,22 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-orange-500 to-orange-600"></div>
+            <div className="h-1 bg-gradient-to-r from-amber-500 to-orange-600"></div>
           </div>
 
           {/* Total Warkops */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 hover:border-emerald-500/30 transition-all duration-300 overflow-hidden group">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Total Warkop
                   </p>
-                  <p className="text-3xl font-bold text-gray-900 mt-2">
+                  <p className="text-3xl font-bold text-white mt-2">
                     {stats.totalWarkops.toLocaleString()}
                   </p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-emerald-500/20">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -389,22 +389,22 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+            <div className="h-1 bg-gradient-to-r from-emerald-500 to-green-600"></div>
           </div>
 
           {/* Total Revenue */}
-          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 hover:border-violet-500/30 transition-all duration-300 overflow-hidden group">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-zinc-400 uppercase tracking-wide">
                     Pendapatan
                   </p>
-                  <p className="text-2xl font-bold text-gray-900 mt-2">
+                  <p className="text-2xl font-bold text-white mt-2">
                     Rp {stats.totalRevenue.toLocaleString("id-ID")}
                   </p>
                 </div>
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-violet-500/20">
                   <svg
                     className="w-8 h-8 text-white"
                     fill="none"
@@ -421,15 +421,15 @@ export default function AdminDashboard() {
                 </div>
               </div>
             </div>
-            <div className="h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
+            <div className="h-1 bg-gradient-to-r from-violet-500 to-purple-600"></div>
           </div>
         </div>
 
         {/* Recent Activity Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Users */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
                   className="w-6 h-6 mr-2"
@@ -450,27 +450,27 @@ export default function AdminDashboard() {
             <div className="p-6">
               {stats.recentUsers.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Belum ada pengguna</p>
+                  <p className="text-zinc-500">Belum ada pengguna</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {stats.recentUsers.map((user) => (
                     <div
                       key={user.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors border border-white/5"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-cyan-500/20">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-white">
                             {user.name}
                           </p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
+                          <p className="text-sm text-zinc-400">{user.email}</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                      <span className="px-3 py-1 bg-cyan-500/20 text-cyan-400 text-xs font-semibold rounded-full border border-cyan-500/30">
                         {user.role}
                       </span>
                     </div>
@@ -481,8 +481,8 @@ export default function AdminDashboard() {
           </div>
 
           {/* Recent Warkops */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4">
+          <div className="bg-[#121215] rounded-2xl border border-white/10 overflow-hidden">
+            <div className="bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white flex items-center">
                 <svg
                   className="w-6 h-6 mr-2"
@@ -503,29 +503,29 @@ export default function AdminDashboard() {
             <div className="p-6">
               {stats.recentWarkops.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Belum ada warkop</p>
+                  <p className="text-zinc-500">Belum ada warkop</p>
                 </div>
               ) : (
                 <div className="space-y-4">
                   {stats.recentWarkops.map((warkop) => (
                     <div
                       key={warkop.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors border border-white/5"
                     >
                       <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center text-white text-2xl">
+                        <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white text-2xl shadow-lg shadow-emerald-500/20">
                           ☕
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900">
+                          <p className="font-semibold text-white">
                             {warkop.name}
                           </p>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-zinc-400">
                             {warkop.location}
                           </p>
                         </div>
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-zinc-500">
                         {new Date(warkop.createdAt).toLocaleDateString("id-ID")}
                       </span>
                     </div>

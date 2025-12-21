@@ -187,10 +187,10 @@ export default function WarkopSetupPage() {
 
   if (!user || user.role !== "warkop_owner") {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Akses Ditolak</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl font-bold text-white">Akses Ditolak</h1>
+          <p className="text-zinc-400 mt-2">
             Halaman ini hanya untuk pemilik warkop
           </p>
         </div>
@@ -199,13 +199,13 @@ export default function WarkopSetupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[#0a0a0b] py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Setup Warkop Anda
           </h1>
-          <p className="text-gray-600">
+          <p className="text-zinc-400">
             Lengkapi informasi warkop untuk memulai berjualan
           </p>
         </div>
@@ -216,7 +216,7 @@ export default function WarkopSetupPage() {
             <div key={step} className="flex items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold ${
-                  step <= currentStep ? "bg-amber-600" : "bg-gray-300"
+                  step <= currentStep ? "bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/30" : "bg-zinc-700"
                 }`}
               >
                 {step}
@@ -224,7 +224,7 @@ export default function WarkopSetupPage() {
               {step < 3 && (
                 <div
                   className={`w-16 h-1 ${
-                    step < currentStep ? "bg-amber-600" : "bg-gray-300"
+                    step < currentStep ? "bg-violet-500" : "bg-zinc-700"
                   }`}
                 ></div>
               )}
@@ -232,12 +232,12 @@ export default function WarkopSetupPage() {
           ))}
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8">
+        <div className="bg-[#121215] rounded-2xl border border-white/10 p-8">
           <form onSubmit={handleSubmit}>
             {/* Step 1: Basic Info */}
             {currentStep === 1 && (
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="text-xl font-semibold text-white mb-4">
                   Informasi Dasar Warkop
                 </h2>
 
@@ -248,11 +248,12 @@ export default function WarkopSetupPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Contoh: Warkop Pak Ahmad"
+                  variant="dark"
                   required
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-zinc-300 mb-2">
                     Deskripsi Warkop *
                   </label>
                   <textarea
@@ -261,7 +262,7 @@ export default function WarkopSetupPage() {
                     onChange={handleInputChange}
                     placeholder="Ceritakan tentang warkop Anda..."
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
                     required
                   />
                 </div>
@@ -273,6 +274,7 @@ export default function WarkopSetupPage() {
                   value={formData.location}
                   onChange={handleInputChange}
                   placeholder="Jl. Contoh No. 123, Kota"
+                  variant="dark"
                   required
                 />
 
@@ -284,6 +286,7 @@ export default function WarkopSetupPage() {
                     value={formData.contactInfo.phone}
                     onChange={handleInputChange}
                     placeholder="021-12345678"
+                    variant="dark"
                     required
                   />
                   <Input
@@ -293,6 +296,7 @@ export default function WarkopSetupPage() {
                     value={formData.contactInfo.whatsapp}
                     onChange={handleInputChange}
                     placeholder="08123456789"
+                    variant="dark"
                   />
                 </div>
               </div>
@@ -301,7 +305,7 @@ export default function WarkopSetupPage() {
             {/* Step 2: Operational Info */}
             {currentStep === 2 && (
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="text-xl font-semibold text-white mb-4">
                   Informasi Operasional
                 </h2>
 
@@ -320,9 +324,9 @@ export default function WarkopSetupPage() {
                           },
                         }))
                       }
-                      className="mr-2"
+                      className="mr-2 w-4 h-4 text-violet-500 bg-white/5 border-white/20 rounded focus:ring-violet-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-zinc-300">
                       Buka 24 Jam
                     </span>
                   </label>
@@ -335,6 +339,7 @@ export default function WarkopSetupPage() {
                         name="openingHours.open"
                         value={formData.openingHours.open}
                         onChange={handleInputChange}
+                        variant="dark"
                       />
                       <Input
                         label="Jam Tutup"
@@ -342,26 +347,31 @@ export default function WarkopSetupPage() {
                         name="openingHours.close"
                         value={formData.openingHours.close}
                         onChange={handleInputChange}
+                        variant="dark"
                       />
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-zinc-300 mb-3">
                     Fasilitas yang Tersedia
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {facilities.map((facility) => (
                       <label
                         key={facility}
-                        className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                        className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${
+                          formData.facilities.includes(facility)
+                            ? "bg-violet-500/20 border-violet-500/50 text-white"
+                            : "border-white/10 text-zinc-400 hover:bg-white/5 hover:border-white/20"
+                        }`}
                       >
                         <input
                           type="checkbox"
                           checked={formData.facilities.includes(facility)}
                           onChange={() => handleFacilityToggle(facility)}
-                          className="mr-2"
+                          className="mr-2 w-4 h-4 text-violet-500 bg-white/5 border-white/20 rounded focus:ring-violet-500"
                         />
                         <span className="text-sm">{facility}</span>
                       </label>
@@ -374,7 +384,7 @@ export default function WarkopSetupPage() {
             {/* Step 3: Owner Info */}
             {currentStep === 3 && (
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="text-xl font-semibold text-white mb-4">
                   Informasi Pemilik
                 </h2>
 
@@ -385,6 +395,7 @@ export default function WarkopSetupPage() {
                   value={formData.ownerInfo.name}
                   onChange={handleInputChange}
                   placeholder="Nama sesuai KTP"
+                  variant="dark"
                   required
                 />
 
@@ -395,6 +406,7 @@ export default function WarkopSetupPage() {
                   value={formData.ownerInfo.email}
                   onChange={handleInputChange}
                   placeholder="email@example.com"
+                  variant="dark"
                   required
                 />
 
@@ -405,6 +417,7 @@ export default function WarkopSetupPage() {
                   value={formData.ownerInfo.phone}
                   onChange={handleInputChange}
                   placeholder="08123456789"
+                  variant="dark"
                   required
                 />
 
@@ -415,14 +428,15 @@ export default function WarkopSetupPage() {
                   value={formData.ownerInfo.idCard}
                   onChange={handleInputChange}
                   placeholder="16 digit nomor KTP"
+                  variant="dark"
                   required
                 />
 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-medium text-yellow-800 mb-2">
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+                  <h3 className="font-medium text-amber-400 mb-2">
                     📋 Proses Verifikasi
                   </h3>
-                  <p className="text-sm text-yellow-700">
+                  <p className="text-sm text-amber-300/80">
                     Setelah mendaftar, tim kami akan memverifikasi informasi
                     warkop Anda dalam 1-2 hari kerja. Anda akan mendapat
                     notifikasi melalui email setelah verifikasi selesai.
