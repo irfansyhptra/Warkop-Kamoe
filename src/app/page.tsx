@@ -142,7 +142,11 @@ function HomePageContent() {
               dengan tampilan modern dan mudah digunakan
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-300">
+              <Button
+                size="lg"
+                onClick={() => document.getElementById("warkop-list")?.scrollIntoView({ behavior: "smooth" })}
+                className="text-lg px-8 bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all duration-300"
+              >
                 Mulai Pesan Sekarang
               </Button>
               <Button variant="outline" size="lg" className="text-lg px-8 border-white/20 text-white hover:bg-white/5 backdrop-blur-sm">
@@ -238,7 +242,7 @@ function HomePageContent() {
       )}
 
       {/* Filter Section */}
-      <section className="py-8 px-4 sticky top-16 z-30 bg-[#0a0a0b]/80 backdrop-blur-xl border-b border-white/5 shadow-lg">
+      <section id="warkop-list" className="py-8 px-4 sticky top-16 z-30 bg-[#0a0a0b]/80 backdrop-blur-xl border-b border-white/5 shadow-lg">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-white">

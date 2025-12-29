@@ -109,9 +109,9 @@ function AuthPageContent() {
 
       // Call register API
       const success = await register(
+        registerData.name,
         registerData.email,
         registerData.password,
-        registerData.name,
         registerData.phone
       );
 
