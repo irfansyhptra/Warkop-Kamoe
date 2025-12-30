@@ -7,9 +7,12 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <FavoritesProvider>
-        <Script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}        strategy="lazyOnload"
-        >
-        </Script>
+      <Script 
+        id="midtrans-snap"
+        src="https://app.sandbox.midtrans.com/snap/snap.js" 
+        data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}        
+        strategy="lazyOnload"
+      />
       <CartProvider>{children}</CartProvider>
     </FavoritesProvider>
   );
