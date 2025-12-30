@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start -p 3000",
     "lint": "eslint",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
     "mongodb:start": "powershell -ExecutionPolicy Bypass -File ./start-mongodb.ps1",
     "mongodb:stop": "powershell -ExecutionPolicy Bypass -File ./stop-mongodb.ps1",
     "mongodb:status": "powershell -ExecutionPolicy Bypass -File ./status-mongodb.ps1",
