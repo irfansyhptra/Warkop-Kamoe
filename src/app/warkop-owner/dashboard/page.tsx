@@ -189,6 +189,42 @@ export default function WarkopOwnerDashboardPro() {
               </p>
             </div>
             <div className="flex gap-3">
+              <Link href="/warkop-owner/menu?action=add">
+                <Button variant="primary" size="md" className="bg-gradient-to-r from-emerald-500 to-green-600 shadow-lg shadow-emerald-500/20">
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  Tambah Menu
+                </Button>
+              </Link>
+              <Link href="/warkop-owner/menu">
+                <Button variant="primary" size="md" className="bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg shadow-violet-500/20">
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  Kelola Menu
+                </Button>
+              </Link>
               <Link href="/warkop-owner/settings">
                 <Button variant="outline" size="md" className="border-white/10 text-zinc-400 hover:text-white hover:bg-white/5">
                   <svg
@@ -229,24 +265,6 @@ export default function WarkopOwnerDashboardPro() {
                     />
                   </svg>
                   Grafik
-                </Button>
-              </Link>
-              <Link href="/warkop-owner/menu">
-                <Button variant="primary" size="md" className="bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg shadow-violet-500/20">
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                  Kelola Menu
                 </Button>
               </Link>
               <Link href="/">

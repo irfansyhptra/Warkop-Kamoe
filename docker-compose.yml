@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  # MongoDB Database
+  # 1. MongoDB Database
   mongodb:
     image: mongo:8.0
     container_name: warkop-kamoe-db
@@ -15,7 +15,7 @@ services:
     networks:
       - warkop-network
 
-  # Next.js Application
+  # 2. Next.js Application
   app:
     build:
       context: .
@@ -30,6 +30,55 @@ services:
       - NODE_ENV=production
     depends_on:
       - mongodb
+    networks:
+      - warkop-network
+    # Logging driver default json-file agar bisa dibaca Promtail
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # --- LOGGING STACK (Baru untuk UAS) ---
+
+  # 3. Loki (Log Store)
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: warkop-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - warkop-network
+
+  # 4. Promtail (Log Shipper)
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: warkop-promtail
+    volumes:
+      # Mounting config yang baru dibuat
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      # Mounting socket docker agar bisa baca log container lain
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mounting lokasi log docker di host
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - warkop-network
+
+  # 5. Grafana (Dashboard)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: warkop-grafana
+    ports:
+      - "3001:3000" # Akses di port 3001 agar tidak bentrok dengan Next.js
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - loki
     networks:
       - warkop-network
 

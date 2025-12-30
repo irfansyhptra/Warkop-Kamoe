@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import { MenuItem } from "@/types";
@@ -23,6 +23,7 @@ interface MenuItemForm {
 
 const WarkopOwnerMenuManagement: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, isAuthenticated, authLoading } = useAuth();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +48,35 @@ const WarkopOwnerMenuManagement: React.FC = () => {
     spicyLevel: 0,
     isRecommended: false,
   });
+
+  // Check for action=add in URL params to auto-open add modal
+  useEffect(() => {
+    const action = searchParams.get("action");
+    if (action === "add" && !loading && user?.warkopId) {
+      handleOpenAddModal();
+      // Clear the URL param after opening modal
+      router.replace("/warkop-owner/menu", { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, loading, user]);
+
+  // Function to open add modal
+  const handleOpenAddModal = () => {
+    setEditingItem(null);
+    setFormData({
+      name: "",
+      description: "",
+      price: 0,
+      category: "Kopi",
+      availability: "available",
+      preparationTime: "10-15 menit",
+      spicyLevel: 0,
+      isRecommended: false,
+    });
+    setSelectedImageFile(null);
+    setImagePreview(null);
+    setIsModalOpen(true);
+  };
 
   // Check authentication and role
   useEffect(() => {
