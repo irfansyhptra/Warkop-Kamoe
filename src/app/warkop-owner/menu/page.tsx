@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,7 +21,17 @@ interface MenuItemForm {
   isRecommended?: boolean;
 }
 
-const WarkopOwnerMenuManagement: React.FC = () => {
+// Loading component for Suspense
+const MenuPageLoading = () => (
+  <div className="min-h-screen bg-[#0a0a0b] flex items-center justify-center">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-violet-500 mx-auto mb-4"></div>
+      <p className="text-zinc-400 font-medium">Memuat halaman menu...</p>
+    </div>
+  </div>
+);
+
+const WarkopOwnerMenuManagementContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, authLoading } = useAuth();
@@ -1138,6 +1148,15 @@ const WarkopOwnerMenuManagement: React.FC = () => {
         </Modal>
       </div>
     </div>
+  );
+};
+
+// Main component wrapped with Suspense
+const WarkopOwnerMenuManagement: React.FC = () => {
+  return (
+    <Suspense fallback={<MenuPageLoading />}>
+      <WarkopOwnerMenuManagementContent />
+    </Suspense>
   );
 };
 
