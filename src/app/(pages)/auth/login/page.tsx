@@ -35,7 +35,8 @@ export default function LoginPage() {
       const success = await login(formData.email, formData.password);
       if (success) {
         showSuccess("Login Berhasil", "Selamat datang kembali!");
-        router.push("/");
+        // Force full page reload to update all components with new auth state
+        window.location.href = "/";
       } else {
         showError("Login Gagal", "Email atau password salah");
       }

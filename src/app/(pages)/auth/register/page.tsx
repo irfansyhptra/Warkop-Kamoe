@@ -53,12 +53,14 @@ export default function RegisterPage() {
         formData.name,
         formData.email,
         formData.password,
-        formData.phone
+        formData.phone,
+        formData.role
       );
 
       if (success) {
         showSuccess("Registrasi Berhasil", "Akun Anda berhasil dibuat!");
-        router.push("/");
+        // Force full page reload to update all components with new auth state
+        window.location.href = "/";
       } else {
         showError("Registrasi Gagal", "Terjadi kesalahan, silakan coba lagi");
       }

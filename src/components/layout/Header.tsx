@@ -158,7 +158,8 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     await logout();
     setIsProfileMenuOpen(false);
-    router.push("/");
+    // Force full page reload to clear all auth state
+    window.location.href = "/";
   };
 
   const getInitials = (name: string) => {

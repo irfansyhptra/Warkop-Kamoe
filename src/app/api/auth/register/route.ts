@@ -8,7 +8,10 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const body = await request.json();
+    console.log("Register request body:", JSON.stringify(body, null, 2));
+    
     const { name, email, password, phone, role = "customer" } = body;
+    console.log("Extracted values:", { name, email, phone, role });
 
     // Validation
     if (!name || !email || !password) {
